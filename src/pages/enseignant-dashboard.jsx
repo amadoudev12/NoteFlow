@@ -202,7 +202,7 @@ function DashboardContent({ user }) {
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-xs text-slate-500 bg-white border border-slate-100 px-3 py-1.5 rounded-full">
+          <span className="text-xs text-slate-500 bg-white border border-slate-100 px-3 py-1.5 rounded-full max-sm:hidden">
             2ème Trimestre · 2024–2025
           </span>
           <button onClick={logOut}>

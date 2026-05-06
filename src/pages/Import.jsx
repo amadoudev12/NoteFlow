@@ -130,7 +130,7 @@ export default function ImportPage() {
     : [!!file && !errors.file, !!preview];
 
   return (
-    <div className="p-4 sm:p-6 space-y-5  ml-45">
+    <div className="max-sm:ml-2">
       {/* ── Header ── */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">

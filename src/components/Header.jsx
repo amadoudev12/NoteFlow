@@ -40,11 +40,11 @@ function Header({ setOpen }) {
             </div>
 
             {/* Avatar */}
-            <img
+            {/* <img
             src="https://api.dicebear.com/7.x/avataaars/svg?seed=teacher42&backgroundColor=b6e3f4"
             alt="avatar"
             className="w-9 h-9 rounded-xl object-cover border-2 border-blue-200 cursor-pointer hover:border-blue-400 transition"
-            />
+            /> */}
         </div>
         </header>
     );

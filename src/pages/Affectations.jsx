@@ -387,7 +387,7 @@ export default function AffectationPage() {
   };
 
   return (
-    <div className="p-4  ml-45 sm:p-6 space-y-5">
+    <div className="p-4  ml-45 sm:p-6 space-y-5 max-sm:ml-2">
       {/* ── Header ── */}
       <div className="flex flex-wrap items-center gap-4">
         <div className="flex items-center gap-3">

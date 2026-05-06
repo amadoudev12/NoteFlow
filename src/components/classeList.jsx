@@ -32,7 +32,7 @@ function StatCard({ items, index, isActive }) {
       <div className="mt-1">
         {/* Badge matière */}
         <span className={`inline-block text-xs font-medium px-2.5 py-0.5 rounded-full mb-3 ${color.bg} ${color.text} border ${color.border}`}>
-          {items.matiere}
+          {items.matiere?.nom}
         </span>
 
         {/* Nom de la classe */}
@@ -109,7 +109,7 @@ export default function ClasseList() {
   }, [])
 
   return (
-    <div className="ml-50">
+    <div className="ml-4 max-sm:ml-2">
       {/* Header */}
       <div className="mb-6">
         <h2 className="text-xl font-bold text-slate-800">Mes classes</h2>

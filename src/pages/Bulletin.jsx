@@ -112,7 +112,7 @@ const isLoadingBtn = (classeId, type, matiereId) =>
     //     )
     // }
     return (
-    <div className="p-6 ml-45">
+    <div className="p-6 ml-45 max-sm:ml-2 max-lg:ml-8">
         <Toaster
             position="top-center"
             reverseOrder={false}

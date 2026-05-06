@@ -114,7 +114,7 @@ function TrimestresPage() {
   };
 
   return (
-    <div className="ml-45">
+    <div className="ml-45 max-sm:ml-2">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Form */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
