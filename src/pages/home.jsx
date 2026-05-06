@@ -10,7 +10,7 @@ const Icon = ({ d, size = 24, className = '' }) => (
   </svg>
 );
 
-const icons = {
+export const icons = {
   logo:      "M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5",
   bulletin:  ["M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z","M14 2v6h6","M16 13H8","M16 17H8","M10 9H8"],
   chart:     ["M18 20V10","M12 20V4","M6 20v-6"],
