@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import classeService from "../../services/classeService"
 import bulletinService from "../../services/bulletinService"
-
+import toast, { Toaster } from "react-hot-toast"
 import noteService from "../../services/noteService"
 import { useNavigate } from "react-router-dom"
 
@@ -49,12 +49,12 @@ const toggleFichePanel = async (classe) => {
     }
 }
 
-  /* ── Télécharger bulletins ── */
+  /* ── Generer les  bulletins ── */
 const downloadBulletin = async (classe) => {
     setDownloading({ id: classe.id, type: "bulletin" })
         try {
-            const res = await bulletinService.getBulletinsByClasse(classe.id)
-            triggerDownload(res.data, `bulletins_${classe.libelle}.pdf`)
+            const res = await bulletinService.genererBulletinClasse(classe.id)
+            toast.success('Bulletin generer avec succes')
         } catch (err) {
             
             console.log('erreur serveur')
@@ -104,16 +104,19 @@ const isLoadingBtn = (classeId, type, matiereId) =>
     downloading?.type === type &&
     (matiereId === undefined || downloading?.matiereId === matiereId)
 
-    if(classes.length == 0){
-        return (
-            <div>
-                aucune classe n'a été enregistrer veuillez configuer votre etablissement
-            </div>
-        )
-    }
+    // if(classes.length == 0){
+    //     return (
+    //         <div>
+    //             aucune classe n'a été enregistrer veuillez configuer votre etablissement
+    //         </div>
+    //     )
+    // }
     return (
     <div className="p-6 ml-45">
-
+        <Toaster
+            position="top-center"
+            reverseOrder={false}
+        />
         {/* Header */}
         <div className="rounded-2xl overflow-hidden mb-6"
             style={{ border: "0.5px solid var(--color-border-tertiary)" }}>
@@ -121,10 +124,10 @@ const isLoadingBtn = (classeId, type, matiereId) =>
             <div className="flex flex-wrap items-center justify-between gap-4 px-6 py-5"
             style={{ background: "var(--color-background-primary)" }}>
             <div>
-                <p className="text-xs font-medium uppercase tracking-widest mb-0.5"
-                style={{ color: "var(--color-text-secondary)" }}>Administration</p>
+                {/* <p className="text-xs font-medium uppercase tracking-widest mb-0.5"
+                style={{ color: "var(--color-text-secondary)" }}>Administration</p> */}
                 <h1 className="text-xl font-medium" style={{ color: "var(--color-text-primary)" }}>
-                Impression des <span style={{ color: "#7f77dd" }}>bulletins</span>
+                <span style={{ color: "#7f77dd" }}>Bulletins et notes</span>
                 </h1>
             </div>
             <div className="text-center px-5 py-2 rounded-lg"
@@ -199,7 +202,7 @@ const isLoadingBtn = (classeId, type, matiereId) =>
                 <div key={classe.id}>
 
                     {/* Ligne principale */}
-                    <div className="grid px-5 py-4 items-center"
+                    <div className="grid px-5 py-4 items-center gap-5"
                     style={{
                         gridTemplateColumns: "1fr 140px 160px",
                         borderBottom: "0.5px solid var(--color-border-tertiary)",
@@ -226,7 +229,7 @@ const isLoadingBtn = (classeId, type, matiereId) =>
                             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                             </svg>
-                            Bulletins
+                            Generer les Bulletins
                         </>
                         )}
                     </button>

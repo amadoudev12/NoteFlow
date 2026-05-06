@@ -1,4 +1,5 @@
 function LineSparkChart({ data }) {
+    // console.log(data)
     if (!data?.length) return null;
     const W = 600, H = 200, PAD = 40;
     const values = data.map(d => parseFloat(d.moyenne));
@@ -9,7 +10,13 @@ function LineSparkChart({ data }) {
     const points = values.map((v, i) => [PAD + i * xStep, yScale(v)]);
     const linePath = points.map((p, i) => (i === 0 ? `M${p[0]},${p[1]}` : `C${p[0] - xStep / 2},${points[i-1][1]} ${p[0] - xStep / 2},${p[1]} ${p[0]},${p[1]}`)).join(" ");
     const areaPath = linePath + ` L${points[points.length-1][0]},${H-PAD} L${PAD},${H-PAD} Z`;
-
+    if(!data[0].moyenne){
+        return (
+            <div className="flex items-center justify-center">
+                le trimestre est en cours
+            </div>
+        )
+    }
     return (
         <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ height: 180 }}>
         <defs>

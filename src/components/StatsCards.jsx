@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import StatCard from "./StatCard";
+// import StatCard from "./StatCard";
 import eleveService from "../../services/eleveService";
 import { useNavigate } from "react-router-dom";
 const getMoyenneGenerale = (matieres) => {
@@ -28,35 +28,59 @@ const getMeilleureMatiere = (matieres) => {
     }
     return matieres.reduce((best, m) => (Number(m.moyenne) > Number(best.moyenne) ? m : best), matieres[0]);
 } 
-function StatsCards({matiereMoyenne, eleve}) {
-        const navigate = useNavigate()
-        const [rang, setRang]= useState(null)
-        useEffect (()=>{
-            const getRangFunction = async () => {
-                try{
-                    const res = await eleveService.getRang()
-                    if(res.data){
-                        setRang(res.data.rang)
-                    }
-                }catch(err){
-                    console.log('erreur serveur')
-                    navigate('/500')
-                }
-            }
-            getRangFunction()
-        },[eleve])
-        const moy = getMoyenneGenerale(matiereMoyenne);
-        const mention = getMention(moy);
-        const meilleure = getMeilleureMatiere(matiereMoyenne);
-        // const totalEvals = notesRecentes.length;
-        return (
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <StatCard  label="Moyenne générale" value={`${moy}/20`} sub={mention.label} subColor={mention.color} accent="#6366f1" />
-            <StatCard  label="Matières" value={matiereMoyenne.length} sub="au programme" subColor="text-slate-400" accent="#a78bfa" />
-            {/* <StatCard icon="✏️" label="Évaluations" value={totalEvals} sub="ce trimestre" subColor="text-slate-400" accent="#38bdf8" /> */}
-            <StatCard  label="Meilleure matière" value={`${Number(meilleure?.moyenne ?? 0)}/20`} sub={meilleure?.nom} subColor="text-emerald-400" accent="#34d399" />
-            <StatCard  label="Rang" value={rang != null ? `${rang}` : "Non classe"} sub={meilleure?.nom} subColor="text-emerald-400" accent="#34d399" />
-            </div>
-        );
+function StatCard({ label, value, sub, subColor, accentColor }) {
+    return (
+        <div style={{
+            background: "#fff", border: "0.5px solid #dce8f9",
+            borderRadius: 14, padding: "1rem 1.2rem",
+            position: "relative", overflow: "hidden"
+        }}>
+            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2.5, background: accentColor, borderRadius: "14px 14px 0 0" }} />
+            <p style={{ fontSize: 11, color: "#6c8db5", textTransform: "uppercase", letterSpacing: "0.08em", margin: "0 0 6px" }}>
+                {label}
+            </p>
+            <p style={{ fontSize: 26, fontWeight: 700, color: "#0c2c5a", margin: "0 0 4px", lineHeight: 1 }}>
+                {value}
+            </p>
+            <p style={{ fontSize: 12, fontWeight: 500, color: subColor, margin: 0 }}>
+                {sub}
+            </p>
+        </div>
+    )
 }
+
+function StatsCards({ matiereMoyenne, eleve }) {
+    const [rang, setRang] = useState(null)
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        const getRangFunction = async () => {
+            try {
+                const res = await eleveService.getRang()
+                if (res.data) setRang(res.data.rang)
+            } catch {
+                navigate('/500')
+            }
+        }
+        getRangFunction()
+    }, [eleve])
+
+    const moy = getMoyenneGenerale(matiereMoyenne)
+    const mention = getMention(moy)
+    const meilleure = getMeilleureMatiere(matiereMoyenne)
+
+    return (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 12, marginBottom: "1.25rem" }}>
+            <StatCard label="Moyenne générale" value={`${moy}/20`} sub={mention.label}
+                subColor={parseFloat(moy) >= 10 ? "#0d6b43" : "#b91c1c"} accentColor="#1e88e5" />
+            <StatCard label="Matières" value={matiereMoyenne.length} sub="au programme"
+                subColor="#6c8db5" accentColor="#42a5f5" />
+            <StatCard label="Meilleure matière" value={`${Number(meilleure?.moyenne ?? 0).toFixed(1)}/20`}
+                sub={meilleure?.matiere ?? "—"} subColor="#0d6b43" accentColor="#00897b" />
+            <StatCard label="Classement" value={rang != null ? `${rang}e` : "—"}
+                sub="sur la classe" subColor="#1e88e5" accentColor="#1565c0" />
+        </div>
+    )
+}
+
 export default StatsCards

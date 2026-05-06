@@ -34,7 +34,7 @@ function getInitials(e) {
 
 // ─── Toast ────────────────────────────────────────────────────────────────────
 
-function Toast({ toast }) {
+export function Toast({ toast }) {
   if (!toast) return null;
   const config = {
     success: {

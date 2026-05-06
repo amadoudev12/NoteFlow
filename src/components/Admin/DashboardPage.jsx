@@ -37,7 +37,7 @@ function DashboardPage({ stat, chartData, loading }) {
         <section className="grid grid-cols-1 xl:grid-cols-3 gap-5">
             <div className="xl:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
             <SectionHeader icon={Activity} title="Évolution de la moyenne générale" subtitle="Par trimestre" color="blue" />
-            {loading ? <Skeleton className="h-44" /> : <LineSparkChart  data={chartData.courbeData?.courbeData} />}
+                {loading ? <Skeleton className="h-44" /> : <LineSparkChart  data={chartData.courbeData?.courbeData} />}
             </div>
             <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
             <SectionHeader icon={PieChart} title="Répartition des notes" subtitle="Tous trimestres" color="rose" />
