@@ -50,7 +50,7 @@ const CONFIG = {
   },
 };
 
-const ETABLISSEMENT = { id: 1, nom: "Lycée Moderne de Cocody" };
+// const ETABLISSEMENT = { id: 1, nom: "Lycée Moderne de Cocody" };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -335,10 +335,10 @@ useEffect(() => {
               <h1 className="text-xl font-bold text-slate-800">
                 Gestion des {cfg.labelPlural}
               </h1>
-              <div className="flex items-center gap-1.5 mt-0.5">
+              {/* <div className="flex items-center gap-1.5 mt-0.5">
                 <School size={12} className="text-slate-400" />
                 <p className="text-xs text-slate-500">{ETABLISSEMENT.nom}</p>
-              </div>
+              </div> */}
             </div>
           </div>
           <div className="sm:ml-auto flex items-center gap-2 bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-600 shadow-sm self-start sm:self-auto">
