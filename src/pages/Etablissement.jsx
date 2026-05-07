@@ -74,7 +74,7 @@ export default function EtablissementPage() {
     ];
 
     return (
-        <div className="ml-45 max-sm:ml-2">
+        <div className="ml-45 max-sm:ml-2 max-lg:ml-8">
         <SectionTitle icon={Building2} title="Établissement" subtitle="Informations et configuration de l'école" />
         <div className="max-w-2xl">
             <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-8">

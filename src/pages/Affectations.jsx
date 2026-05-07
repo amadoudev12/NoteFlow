@@ -364,10 +364,10 @@ export default function AffectationPage() {
     showToast("Affectation ajoutée avec succès !", "success");
   };
 
-  const handleDelete = (id) => {
-    setAffectations((prev) => prev.filter((a) => a.id !== id));
-    showToast("Affectation supprimée.", "warning");
-  };
+  // const handleDelete = (id) => {
+  //   setAffectations((prev) => prev.filter((a) => a.id !== id));
+  //   showToast("Affectation supprimée.", "warning");
+  // };
 
   const handleSaveEdit = (updated) => {
     const doublon = affectations.find(
@@ -387,7 +387,7 @@ export default function AffectationPage() {
   };
 
   return (
-    <div className="p-4  ml-45 sm:p-6 space-y-5 max-sm:ml-2">
+    <div className="p-4  ml-45 sm:p-6 space-y-5 max-sm:ml-2 max-lg:ml-1">
       {/* ── Header ── */}
       <div className="flex flex-wrap items-center gap-4">
         <div className="flex items-center gap-3">
@@ -535,13 +535,13 @@ export default function AffectationPage() {
                               >
                                 <Pencil size={11} /> Modifier
                               </button>
-                              <button
+                              {/* <button
                                 onClick={() => handleDelete(a.id)}
                                 className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-200 text-slate-500
                                   hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-all text-xs font-medium"
                               >
                                 <Trash2 size={11} /> Supprimer
-                              </button>
+                              </button> */}
                             </div>
                           </td>
                         </tr>

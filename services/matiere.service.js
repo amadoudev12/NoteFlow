@@ -3,8 +3,9 @@ import axiosClient from "./AxiosClient";
 
 const matiereService = {
     getMatieres : ()=> axiosClient.get('/matieres'),
-    postMatiers : (data)=> axiosClient.post('/matieres/add', data),
-    modMatieres : (id, data)=> axiosClient.put(`/matieres/update/${id}`, data)
+    postMatier : (data)=> axiosClient.post('/matieres/add', data),
+    modMatiere : (id, data)=> axiosClient.put(`/matieres/update/${id}`, data),
+    delMatiere : (id)=> axiosClient.delete(`/matieres/delete/${id}`)
 }
 
 export default matiereService

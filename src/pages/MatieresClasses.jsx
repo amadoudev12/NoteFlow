@@ -28,9 +28,9 @@ const CONFIG = {
     icon: BookOpen,
     color: "indigo",
     getAll: () => matiereService.getMatieres(),
-    create: (data) => matiereService.postMatiers(data),
-    update: (id, data) => matiereService.modMatieres(id, data),
-    delete: (id) => matiereService.delMatieres(id),
+    create: (data) => matiereService.postMatier(data),
+    update: (id, data) => matiereService.modMatiere(id, data),
+    delete: (id) => matiereService.delMatiere(id),
     responseKey: "matieres",
     nameKey:"nom"
   },
@@ -42,8 +42,8 @@ const CONFIG = {
     color: "violet",
     getAll: () => classeService.getAllClasse(),
     create: (data) => classeService.postClasses(data),
-    update: (id, data) => classeService.modClasses(id, data),
-    delete: (id) => classeService.delClasses(id),
+    update: (id, data) => classeService.modClasse(id, data),
+    delete: (id) => classeService.delClasse(id),
     responseKey: "classes",
     createResponseKey: "classe",
     nameKey:"libelle"
@@ -91,7 +91,7 @@ function ConfirmModal({ item, label, onCancel, onConfirm }) {
             <p className="text-sm text-slate-500 mb-6">
                 Voulez-vous vraiment supprimer {label.toLowerCase()}{" "}
                 <span className="font-semibold text-slate-700">&laquo; {item.nom} &raquo;</span> ?
-                Cette action est irréversible.
+                Cette action entrainera aussi la suppression de l'affectation . 
             </p>
             <div className="flex gap-3">
                 <button
@@ -292,7 +292,7 @@ useEffect(() => {
 
   // ── Supprimer ──
   const handleConfirmDelete = async () => {
-    const nom = deleteTarget.nom;
+    const nom = deleteTarget.nom ? deleteTarget.nom  : deleteTarget.libelle ;
     try {
       await cfg.delete(deleteTarget.id);
       setItems((prev) => prev.filter((m) => m.id !== deleteTarget.id));

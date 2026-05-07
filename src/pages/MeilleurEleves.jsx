@@ -111,7 +111,7 @@ export default function TopElevesDashboard() {
         )
     }
     return (
-        <div className="ml-45 max-sm:ml-2">
+        <div className="ml-45 max-sm:ml-2 max-lg:ml-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">
             {data.map((classData, i) => (
             <ClassCard
