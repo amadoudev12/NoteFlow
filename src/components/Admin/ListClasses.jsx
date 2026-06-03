@@ -214,13 +214,13 @@ export default function ListClasse() {
         <div className="liste-classe-root">
             <div className="liste-classe-header">
             <h1 className="liste-classe-title">Mes Classes</h1>
-            <p className="liste-classe-subtitle">{classes.length} classe{classes.length !== 1 ? 's' : ''} disponible{classes.length !== 1 ? 's' : ''}</p>
+            <p className="liste-classe-subtitle">{classes?.length} classe{classes?.length !== 1 ? 's' : ''} disponible{classes?.length !== 1 ? 's' : ''}</p>
             </div>
 
             <div className="grid-classes">
             {loading
                 ? Array.from({ length: 8 }).map((_, i) => <div key={i} className="skeleton-card" style={{ animationDelay: `${i * 100}ms` }} />)
-                : classes.map((classeItem, i) => (
+                : classes?.map((classeItem, i) => (
                 <StatCard key={i} classe={classeItem} index={i} visible={visible} />
                 ))
             }

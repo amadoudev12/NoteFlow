@@ -1,32 +1,21 @@
 import { useState, useCallback, useEffect } from "react";
+import * as XLSX from "xlsx";
+
 import eleveServices from "../../services/eleveService";
 import enseignantService from "../../services/enseignantService";
 import classeServices from "../../services/classeService";
-//Toast Hook
+
 import useToast from "../hooks/UseToast";
-
-//Toast UI
 import ToastContainer from "../components/Admin/ToastContainner";
-
-//Mode Toggle
 import ModeToggle from "../components/Admin/ModeToggle";
-//Steps
 import Steps from "../components/Admin/Steps";
-
-//Class Select
 import ClassSelect from "../components/Admin/ClasseSelect";
-
-//Drop Zone
 import DropZone from "../components/Admin/DropZone";
-
-//Column Legend
 import ColumnLegend from "../components/Admin/ColumLegend";
-
-//Preview Table
 import PreviewTable from "../components/Admin/PreviewTable";
-
 import MODES from "../utils/Mode";
-//API
+
+// ─── API ──────────────────────────────────────────────────────
 const api = {
   getAllClasse: () => classeServices.getAllClasse(),
   postEleves: (data) => eleveServices.postEleves(data),
@@ -57,80 +46,142 @@ export default function ImportPage() {
   const { toasts, add: toast, remove } = useToast();
   const cfg = MODES[mode];
 
+  // Reset state on mode change
   useEffect(() => {
-    setFile(null); setPreview(null); setSelClass(""); setErrors({}); setProgress(0);
+    setFile(null);
+    setPreview(null);
+    setSelClass("");
+    setErrors({});
+    setProgress(0);
   }, [mode]);
 
+  // Load classes when mode requires it
   useEffect(() => {
     if (!cfg.needsClass) return;
     setLCls(true);
-    api.getAllClasse()
-      .then((res) => { const d = res.data?.classes || res.data || []; setCList(Array.isArray(d) ? d : []); })
-      .catch(() => { toast("Impossible de charger les classes.", "error"); setCList([]); })
+    api
+      .getAllClasse()
+      .then((res) => {
+        const d = res.data?.classes || res.data || [];
+        setCList(Array.isArray(d) ? d : []);
+      })
+      .catch(() => {
+        toast("Impossible de charger les classes.", "error");
+        setCList([]);
+      })
       .finally(() => setLCls(false));
   }, [mode]);
 
-  const loadXlsx = () => new Promise((res, rej) => {
-    if (window.XLSX) { res(window.XLSX); return; }
-    const s = document.createElement("script");
-    s.src = "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js";
-    s.onload = () => res(window.XLSX); s.onerror = rej;
-    document.head.appendChild(s);
-  });
+  // Handle file selection and parsing
+  const handleFile = useCallback(
+    async (f, fileErr) => {
+      if (fileErr) {
+        setErrors((p) => ({ ...p, file: fileErr }));
+        setFile(null);
+        setPreview(null);
+        return;
+      }
 
-  const handleFile = useCallback(async (f, fileErr) => {
-    if (fileErr) { setErrors((p) => ({ ...p, file: fileErr })); setFile(null); setPreview(null); return; }
-    setErrors((p) => ({ ...p, file: null })); setFile(f); setPreview(null);
-    try {
-      const XLSX = await loadXlsx();
-      const buf = await f.arrayBuffer();
-      const wb = XLSX.read(buf, { type: "array" });
-      const ws = wb.Sheets[wb.SheetNames[0]];
-      const json = XLSX.utils.sheet_to_json(ws, { defval: "" });
-      if (!json.length) { setErrors((p) => ({ ...p, file: "Le fichier est vide." })); return; }
-      const cols = Object.keys(json[0]).map((c) => c.toLowerCase());
-      const missing = cfg.columns.filter((c) => c.required && !cols.includes(c.key.toLowerCase()));
-      if (missing.length) { setErrors((p) => ({ ...p, file: `Colonnes obligatoires manquantes : ${missing.map((c) => c.key).join(", ")}` })); setPreview(null); return; }
-      setPreview(json);
-    } catch { setErrors((p) => ({ ...p, file: "Lecture du fichier impossible." })); }
-  }, [cfg]);
+      setErrors((p) => ({ ...p, file: null }));
+      setFile(f);
+      setPreview(null);
 
+      try {
+        const buf = await f.arrayBuffer();
+        const wb = XLSX.read(buf, { type: "array" });
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const json = XLSX.utils.sheet_to_json(ws, { defval: "" });
+
+        if (!json.length) {
+          setErrors((p) => ({ ...p, file: "Le fichier est vide." }));
+          return;
+        }
+
+        const cols = Object.keys(json[0]).map((c) => c.toLowerCase());
+        const missing = cfg.columns.filter(
+          (c) => c.required && !cols.includes(c.key.toLowerCase())
+        );
+
+        if (missing.length) {
+          setErrors((p) => ({
+            ...p,
+            file: `Colonnes obligatoires manquantes : ${missing.map((c) => c.key).join(", ")}`,
+          }));
+          setPreview(null);
+          return;
+        }
+
+        setPreview(json);
+      } catch {
+        setErrors((p) => ({ ...p, file: "Lecture du fichier impossible." }));
+      }
+    },
+    [cfg]
+  );
+
+  // Handle import submission
   const handleSubmit = async () => {
     const errs = {};
     if (cfg.needsClass && !selClass) errs.class = "Sélectionnez une classe.";
     if (!file) errs.file = "Choisissez un fichier Excel.";
     if (!preview && !errs.file) errs.file = "Le fichier n'a pas pu être analysé.";
-    if (Object.keys(errs).length) { setErrors(errs); return; }
+    if (Object.keys(errs).length) {
+      setErrors(errs);
+      return;
+    }
+
     const formData = new FormData();
     formData.append("file", file);
     if (cfg.needsClass) formData.append("classe", selClass);
-    setImp(true); setProgress(0);
+
+    setImp(true);
+    setProgress(0);
     const iv = setInterval(() => setProgress((p) => Math.min(p + 7, 88)), 200);
+
     try {
       const fn = mode === "eleve" ? api.postEleves : api.postEnseignants;
       const res = await fn(formData);
-      clearInterval(iv); setProgress(100);
+      clearInterval(iv);
+      setProgress(100);
       setTimeout(() => {
-        setImp(false); setProgress(0);
+        setImp(false);
+        setProgress(0);
         toast(res.data?.message || "Import réussi ✅", "success");
-        setFile(null); setPreview(null); setSelClass(""); setErrors({});
+        setFile(null);
+        setPreview(null);
+        setSelClass("");
+        setErrors({});
       }, 350);
     } catch (err) {
-      clearInterval(iv); setImp(false); setProgress(0);
-      const msg = err?.response?.data?.message || err?.response?.data || "Erreur serveur lors de l'import.";
+      clearInterval(iv);
+      setImp(false);
+      setProgress(0);
+      const msg =
+        err?.response?.data?.message ||
+        err?.response?.data ||
+        "Erreur serveur lors de l'import.";
       toast(typeof msg === "string" ? msg : "Erreur serveur.", "error");
     }
   };
 
-  const switchMode = (m) => setMode(m);
+  const handleReset = () => {
+    setFile(null);
+    setPreview(null);
+    setSelClass("");
+    setErrors({});
+    setProgress(0);
+  };
 
-  const stepLabels = cfg.needsClass ? ["Classe", "Fichier", "Aperçu"] : ["Fichier", "Aperçu"];
+  const stepLabels = cfg.needsClass
+    ? ["Classe", "Fichier", "Aperçu"]
+    : ["Fichier", "Aperçu"];
+
   const stepDone = cfg.needsClass
     ? [!!selClass, !!file && !errors.file, !!preview]
     : [!!file && !errors.file, !!preview];
 
   return (
-    <div className="max-sm:ml-2">
+    <div className="ml-45 max-sm:ml-2">
       {/* ── Header ── */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
@@ -145,7 +196,7 @@ export default function ImportPage() {
             <p className="text-xs text-slate-400">{cfg.subtitle}</p>
           </div>
         </div>
-        <ModeToggle mode={mode} onSwitch={switchMode} />
+        <ModeToggle mode={mode} onSwitch={setMode} />
       </div>
 
       {/* ── Toasts ── */}
@@ -153,24 +204,6 @@ export default function ImportPage() {
 
       {/* ── Steps ── */}
       <Steps labels={stepLabels} done={stepDone} accent={cfg.accent} />
-
-      {/* ── Info banner ── */}
-      {/* <div
-        className="flex items-start gap-3 px-4 py-3 rounded-xl border text-sm"
-        style={{ background: cfg.accentLight, borderColor: cfg.accentBorder }}
-      >
-        <span className="text-base shrink-0 mt-0.5">ℹ️</span>
-        <div>
-          <p className="font-semibold text-sm mb-0.5" style={{ color: cfg.accentText }}>
-            Route : <code className="font-mono font-bold text-xs">{cfg.apiRoute}</code>
-          </p>
-          <p className="text-xs text-slate-500 leading-relaxed">
-            {mode === "eleve"
-              ? "Le fichier est envoyé avec le champ `classe` (id). L'année académique active est récupérée automatiquement."
-              : "Le fichier est envoyé directement. L'établissement est déduit du compte admin connecté."}
-          </p>
-        </div>
-      </div> */}
 
       {/* ── Main card ── */}
       <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
@@ -191,7 +224,11 @@ export default function ImportPage() {
           {preview && (
             <span
               className="text-xs font-bold px-3 py-1.5 rounded-lg"
-              style={{ background: cfg.accentLight, color: cfg.accent, border: `1px solid ${cfg.accentBorder}` }}
+              style={{
+                background: cfg.accentLight,
+                color: cfg.accent,
+                border: `1px solid ${cfg.accentBorder}`,
+              }}
             >
               {preview.length} ligne{preview.length > 1 ? "s" : ""}
             </span>
@@ -213,7 +250,10 @@ export default function ImportPage() {
           {cfg.needsClass && (
             <ClassSelect
               value={selClass}
-              onChange={(v) => { setSelClass(v); setErrors((p) => ({ ...p, class: null })); }}
+              onChange={(v) => {
+                setSelClass(v);
+                setErrors((p) => ({ ...p, class: null }));
+              }}
               classes={classList}
               loadingClasses={loadingCls}
               error={errors.class}
@@ -239,7 +279,7 @@ export default function ImportPage() {
         {/* Card footer */}
         <div className="flex items-center justify-end gap-2.5 px-5 py-4 border-t border-slate-100 bg-slate-50">
           <button
-            onClick={() => { setFile(null); setPreview(null); setSelClass(""); setErrors({}); setProgress(0); }}
+            onClick={handleReset}
             disabled={importing}
             className="px-4 py-2 rounded-lg border border-slate-200 bg-white text-slate-600 text-sm font-medium
               hover:bg-slate-50 hover:border-slate-300 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
@@ -253,20 +293,19 @@ export default function ImportPage() {
               transition-all active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
             style={{ background: importing ? `${cfg.accent}88` : cfg.accent }}
           >
-            {importing ? <><Spinner size={13} /> Envoi en cours…</> : <>📥 Importer les {cfg.importLabel}</>}
+            {importing ? (
+              <>
+                <Spinner size={13} /> Envoi en cours…
+              </>
+            ) : (
+              <>📥 Importer les {cfg.importLabel}</>
+            )}
           </button>
         </div>
       </div>
 
       {/* ── Preview ── */}
       {preview && <PreviewTable data={preview} mode={mode} />}
-
-      {/* ── Footer note ── */}
-      {/* <p className="text-[10px] text-slate-400 text-center">
-        Données envoyées en multipart/form-data ·{" "}
-        <code style={{ color: cfg.accent }}>{cfg.apiRoute}</code>
-        {" "}· Année académique active résolue côté serveur
-      </p> */}
     </div>
   );
 }

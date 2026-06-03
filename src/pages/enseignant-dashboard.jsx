@@ -3,8 +3,8 @@ import {
   BookOpen, ClipboardList, Users, FileText,
   Calendar, CheckCircle2, Bell, X, Download, ChevronRight,
 } from "lucide-react";
-import ROW_COLORS from "../utils/RowColors";
 import { jwtDecode } from "jwt-decode";
+import ROW_COLORS from "../utils/RowColors";
 import enseignantService from "../../services/enseignantService";
 import { NavLink, useNavigate } from "react-router-dom";
 import FicheNotesModal from "../components/FicheNotes";
@@ -113,6 +113,10 @@ function DashboardContent({ user }) {
   const [showFicheModal, setShowFicheModal] = useState(false)
   const [showNotesPanel, setShowNotesPanel] = useState(false)
   const navigate = useNavigate()
+  const token = localStorage.getItem('token');
+  if(jwtDecode(token).user.firstLogin){
+        navigate('/modification')
+  }
   const logOut = ()=>{
     localStorage.clear()
     navigate('/')
@@ -173,7 +177,8 @@ function DashboardContent({ user }) {
   //   { icon: Users,        iconBg: "bg-teal-50",   iconColor: "text-teal-700",   text: "Nouvel élève ajouté en Troisième D",         time: "Il y a 2 jours" },
   //   { icon: Calendar,     iconBg: "bg-orange-50", iconColor: "text-orange-700", text: "Conseil de classe programmé — 12 mai",       time: "Il y a 3 jours" },
   // ]
-
+  const date = new Date ()
+  const toDay = `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()}`
   return (
     <div className="space-y-6">
 
@@ -198,12 +203,13 @@ function DashboardContent({ user }) {
           </div>
           <div>
             <h1 className="text-xl font-bold text-slate-800">{user?.nom} {user?.prenom}</h1>
-            <p className="text-xs text-slate-400">Enseignant · Mathématiques</p>
+            <p className="text-xs text-slate-400">Enseignant</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-xs text-slate-500 bg-white border border-slate-100 px-3 py-1.5 rounded-full max-sm:hidden">
-            2ème Trimestre · 2024–2025
+          <span className="flex gap-4 text-xs text-slate-500 bg-white border border-slate-100 px-3 py-1.5 rounded-full max-sm:hidden">
+            <Calendar size={15} />
+                {toDay}
           </span>
           <button onClick={logOut}>
             <div className="flex items-center gap-2 px-3 py-1.5 bg-red-50 text-red-700 rounded-full text-xs font-medium border border-red-100">
@@ -238,7 +244,7 @@ function DashboardContent({ user }) {
             <p className="font-semibold text-slate-800">Mes classes</p>
             <span className="text-xs text-slate-400">
               {classeEffectif
-                ? `${classeEffectif.resultat.length} classe${classeEffectif.resultat.length > 1 ? "s" : ""}`
+                ? `${classeEffectif?.resultat.length} classe${classeEffectif.resultat.length > 1 ? "s" : ""}`
                 : "…"
               }
             </span>

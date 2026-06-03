@@ -1,28 +1,24 @@
 import { useEffect, useState } from "react";
 import adminService from "../../services/adminService";
 import PageLoader from "../components/LoaderPage";
-const MEDALS = ["🥇", "🥈", "🥉"];
 
 function StudentRow({ eleve, rank, isTop1 }) {
     const isGreen = eleve.moyenne >= 10;
 
     return (
         <div
-        className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors duration-150
-            ${isTop1 ? "bg-violet-50 border border-violet-200" : "hover:bg-gray-50"}`}
+        className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors duration-150`}
         >
-        {rank < 3 ? (
+        {/* {rank < 3 ? (
             <span className="text-base w-6 text-center shrink-0">{MEDALS[rank]}</span>
         ) : (
             <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-xs font-medium text-gray-500 shrink-0">
             {rank + 1}
             </div>
-        )}
+        )} */}
 
         <span
-            className={`text-sm flex-1 ${
-            isTop1 ? "font-semibold text-violet-800" : "text-gray-800"
-            }`}
+            className={"text-sm flex-1 text-gray-800"}
         >
             {eleve.prenom} {eleve.nom}
         </span>
@@ -70,16 +66,16 @@ function ClassCard({ classData, delay }) {
 
         {top5.length === 0 ? (
             <div className="text-center text-sm text-gray-400 py-6">
-            Aucun élève
+            Aucun élève 
             </div>
         ) : (
             <div className="flex flex-col gap-1">
             {top5.map((eleve, i) => (
                 <StudentRow
-                key={`${eleve.nom}-${eleve.prenom}-${i}`}
-                eleve={eleve}
-                rank={i}
-                isTop1={i === 0}
+                    key={`${eleve.nom}-${eleve.prenom}-${i}`}
+                    eleve={eleve}
+                    rank={i}
+                    isTop1={i === 0}
                 />
             ))}
             </div>
@@ -88,14 +84,14 @@ function ClassCard({ classData, delay }) {
     );
 }
 
-export default function TopElevesDashboard() {
+export default function MauvaisEleves() {
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         const getData = async () => {
             try {
-                const res = await adminService.classeBest()
+                const res = await adminService.mauvaisEleves()
                 if (res.data) {
                     setData(res.data.resultat)
                 }
@@ -116,7 +112,6 @@ export default function TopElevesDashboard() {
         return (
             <div className="ml-45 max-sm:ml-2 max-lg:ml-8 flex items-center justify-center py-20">
                 <div className="text-center text-gray-400">
-                    {/* <div className="text-4xl mb-3">🏫</div> */}
                     <p className="text-sm font-medium">Aucune classe disponible</p>
                 </div>
             </div>

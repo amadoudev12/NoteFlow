@@ -5,6 +5,7 @@ import PrivateRoute from './Private.Route.jsx'
 import PageLoader from '../components/LoaderPage.jsx'
 
 const LoginPage = lazy(()=> import('../pages/login.jsx'))
+const FirstLoginPage = lazy(()=> import('../pages/FirstLogin.jsx'))
 const DashboardEnseignant = lazy(()=> import('../pages/enseignant-dashboard.jsx'))
 const ListeEleve = lazy(()=>import('../pages/listEtudiants.jsx'))
 const DashLayout = lazy(()=>import('../layouts/dashLayout.jsx'))
@@ -18,6 +19,7 @@ const Absence = lazy(()=> import('../pages/Absence.jsx'))
 const Etablissement = lazy(()=> import('../pages/Etablissement.jsx'))
 const Bulletins = lazy(()=> import('../pages/Bulletin.jsx'))
 const TopClasse = lazy(()=> import('../pages/MeilleurEleves.jsx'))
+const BadEleves = lazy(()=> import('../pages/MauvaisEleves.jsx'))
 const Matieres = lazy(()=> import('../pages/MatieresClasses.jsx'))
 const Affectation = lazy(()=> import('../pages/Affectations.jsx'))
 const Import = lazy(()=> import ('../pages/Import.jsx'))
@@ -29,10 +31,12 @@ return (
     <Suspense fallback={<PageLoader message={"chargement"}/>}>
         <Routes>
             <Route path='/login' element={<LoginPage/>} />
+            <Route path='/modification' element={<FirstLoginPage/>} />
             <Route path='/' element={<Home/>}/>
             <Route path='/register' element={<Register/>}/>
             <Route path="/500" element={<Error500 />} />
             <Route element={<PrivateRoute/>}>
+                {/* enseignant route  */}
                 {/* <Route element={<DashLayout/>}> */}
                     <Route path='/dashboard/enseignant' element={<DashboardEnseignant/>}/>
                     <Route path='/dashboard/classes' element={<Classes/>}/>
@@ -49,7 +53,8 @@ return (
                     <Route path='/dashboard/admin/trimestre' element={<Trimestre/>}/>
                     <Route path='/dashboard/admin/etablissement' element={<Etablissement/>}/>
                     <Route path='/dashboard/bulletins' element={<Bulletins/>}/>
-                    <Route path='/dashboard/admin/topClasse' element={<TopClasse/>}/>
+                    <Route path='/dashboard/admin/meilleur-eleves' element={<TopClasse/>}/>
+                    <Route path='/dashboard/admin/mauvais-eleves' element={<BadEleves/>}/>
                     <Route path='/dashboard/admin/matieres' element={<Matieres/>}/>
                     <Route path='/dashboard/admin/classes' element={<Matieres/>}/>
                     <Route path='/dashboard/admin/affectation' element={<Affectation/>}/>

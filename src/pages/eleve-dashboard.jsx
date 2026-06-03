@@ -261,9 +261,13 @@ export default function DashboardEleve() {
     const navigate = useNavigate();
 
     const token = localStorage.getItem('token');
+    if(jwtDecode(token).user.firstLogin){
+        navigate('/modification')
+    }
     if (!token) return navigate('/login');
-    const matricule = jwtDecode(token).profil.matricule;
-
+    const decode = jwtDecode(token)
+    // console.log(decode)
+    const matricule = decode.profil.matricule;
     useEffect(() => {
         eleveService.getEleve(matricule)
             .then(res => { if (res.data) setEleve(res.data.eleveInformation); })

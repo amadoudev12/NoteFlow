@@ -29,6 +29,13 @@ export default function LoginComponent() {
       if (res.data.token) {
             localStorage.setItem('token', res.data.token);
             const token = jwtDecode(res.data.token);
+        
+        // Vérifier si c'est la première connexion
+        if (token.user.firstLogin && token.user.role != "ADMIN") {
+          navigate('/modification');
+          return;
+        }
+        
         if (token.user.role === 'ENSEIGNANT') {
           localStorage.setItem('role', token.user.role);
           navigate('/dashboard/enseignant');

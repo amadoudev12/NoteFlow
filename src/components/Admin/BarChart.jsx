@@ -50,6 +50,7 @@
 //     }
 // export default BarChart
 function BarChart({ data, labelKey = "classe", valueKey = "moyenne", color = "#3b82f6", maxVal = 20 }) {
+    console.log(data)
     if (!data?.length) return null;
 
     const H       = 180;

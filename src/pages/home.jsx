@@ -56,7 +56,7 @@ function Navbar() {
         </div>
 
         {/* Desktop buttons */}
-        <div className="hidden md:flex items-center gap-3">
+        {/* <div className="hidden md:flex items-center gap-3">
           <button
             onClick={() => navigate('/login')}
             className="px-5 py-2.5 text-sm font-medium text-gray-700 hover:text-blue-600 rounded-xl hover:bg-blue-50 transition-all duration-200"
@@ -69,7 +69,7 @@ function Navbar() {
           >
             Créer un compte établissement
           </button>
-        </div>
+        </div> */}
 
         {/* Mobile menu button */}
         <button
@@ -83,14 +83,14 @@ function Navbar() {
       {/* Mobile menu */}
       {menuOpen && (
         <div className="md:hidden bg-white border-t border-gray-100 px-6 py-4 flex flex-col gap-3">
-          <button onClick={() => { navigate('/login'); setMenuOpen(false); }}
+          {/* <button onClick={() => { navigate('/login'); setMenuOpen(false); }}
             className="w-full py-3 text-sm font-medium text-gray-700 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">
             Se connecter
           </button>
           <button onClick={() => { navigate('/register'); setMenuOpen(false); }}
             className="w-full py-3 text-sm font-medium text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition-colors">
             Créer un compte établissement
-          </button>
+          </button> */}
         </div>
       )}
     </nav>
@@ -138,7 +138,7 @@ function Hero() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3">
-            <button
+            {/* <button
               onClick={() => navigate('/register')}
               className="group px-7 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-2xl shadow-lg shadow-blue-200 hover:shadow-xl hover:shadow-blue-300 transition-all duration-300 hover:-translate-y-1 flex items-center justify-center gap-2"
             >
@@ -150,7 +150,7 @@ function Hero() {
               className="px-7 py-4 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-2xl border border-gray-200 hover:border-gray-300 shadow-sm transition-all duration-200 hover:-translate-y-0.5"
             >
               Se connecter
-            </button>
+            </button> */}
           </div>
 
           {/* Stats */}
@@ -519,13 +519,13 @@ function CTA() {
             <p className="text-lg text-gray-500 mb-8 max-w-2xl mx-auto">
               Rejoignez les établissements qui font confiance à NoteFlow pour simplifier leur gestion scolaire.
             </p>
-            <button
+            {/* <button
               onClick={() => navigate('/register')}
               className="group inline-flex items-center gap-2 px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-lg rounded-2xl shadow-xl shadow-blue-200 hover:shadow-2xl hover:shadow-blue-300 transition-all duration-300 hover:-translate-y-1"
             >
               Créer mon établissement
               <Icon d={icons.arrow} size={20} className="group-hover:translate-x-1 transition-transform" />
-            </button>
+            </button> */}
             <p className="mt-4 text-sm text-gray-400">Gratuit pour commencer · Aucune carte bancaire requise</p>
           </div>
         </div>
@@ -548,8 +548,8 @@ function Footer() {
             <span className="text-white font-bold text-lg">NoteFlow</span>
           </div>
           <div className="flex items-center gap-6 text-sm">
-            <button onClick={() => navigate('/login')} className="hover:text-white transition-colors">Se connecter</button>
-            <button onClick={() => navigate('/register')} className="hover:text-white transition-colors">Créer un compte</button>
+            {/* <button onClick={() => navigate('/login')} className="hover:text-white transition-colors">Se connecter</button>
+            <button onClick={() => navigate('/register')} className="hover:text-white transition-colors">Créer un compt</button> */}
           </div>
           <p className="text-sm text-gray-600">© {new Date().getFullYear()} NoteFlow. Tous droits réservés.</p>
         </div>

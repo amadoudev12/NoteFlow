@@ -12,10 +12,11 @@ const COLORS = [
 ]
 
 function StatCard({ items, index, isActive }) {
+  console.log(items.matiere.nom)
   const color = COLORS[index % COLORS.length]
 
   const handleClick = () => {
-    localStorage.setItem('matiere', items.matiere)
+    localStorage.setItem('matiere', items.matiere?.nom)
   }
 
   const content = (

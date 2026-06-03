@@ -1,19 +1,19 @@
 import { jwtDecode } from "jwt-decode";
 import {
-  LayoutDashboard,
-  Calendar,
-  UserX,
-  FileText,
-  Building2,
-  GraduationCap,
-  Trophy,
-  Users,
-  BookOpen,
-  School,
-  Upload,
-  X,
-  LogOut,
-  ChevronRight
+    X,
+    LogOut,
+    ChevronRight,
+    LayoutDashboard,
+    CalendarDays,
+    ClipboardMinus,
+    ScrollText,
+    Building2,
+    Medal,
+    TrendingDown,
+    BookMarked,
+    GraduationCap,
+    FileUp,
+    UserCog,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
@@ -21,36 +21,39 @@ import { NavLink, useNavigate } from "react-router-dom";
 // ─── NAV CONFIG ───────────────────────────────────────────────────────────────
 
 const NAV = [
-    { icon: LayoutDashboard, label: "Tableau de bord",  path: "/dashboard/admin" , end:true},
-    { icon: Calendar,        label: "Trimestres",        path: "/dashboard/admin/trimestre" },
-    { icon: UserX,           label: "Absences",          path: "/dashboard/admin/absences" },
-    { icon: FileText,        label: "Bulletins et Notes",         path: "/dashboard/bulletins" },
-    { icon: Building2,       label: "Établissement",     path: "/dashboard/admin/etablissement" },
-    { icon: Trophy, label: "Top", path: "/dashboard/admin/topClasse" },
-    { icon: Users, label: "Affectation", path: "/dashboard/admin/affectation" },
-    { icon: BookOpen, label: "Matières", path: "/dashboard/admin/matieres" },
-    { icon: School, label: "Classes", path: "/dashboard/admin/classes" },
-    { icon: Upload, label: "Importer", path: "/dashboard/admin/import" },
-    // { icon: School2,       label: "Classes",     path: "/dashboard/admin/classes" },
+  { icon: LayoutDashboard,  label: "Tableau de bord",         path: "/dashboard/admin",                     end: true },
+  { icon: CalendarDays,     label: "Gestion des trimestres",   path: "/dashboard/admin/trimestre" },
+  { icon: ClipboardMinus,   label: "Suivi des absences",       path: "/dashboard/admin/absences" },
+  { icon: ScrollText,       label: "Bulletins & évaluations",  path: "/dashboard/bulletins" },
+  { icon: Building2,        label: "Mon établissement",        path: "/dashboard/admin/etablissement" },
+  { icon: Medal,            label: "Élèves distingués",        path: "/dashboard/admin/meilleur-eleves" },
+  { icon: TrendingDown,     label: "Élèves en difficulté",     path: "/dashboard/admin/mauvais-eleves" },
+  { icon: BookMarked,       label: "Matières enseignées",      path: "/dashboard/admin/matieres" },
+  { icon: GraduationCap,    label: "Gestion des classes",      path: "/dashboard/admin/classes" },
+  { icon: FileUp,           label: "Importation de données",   path: "/dashboard/admin/import" },
+  { icon: UserCog,          label: "Affectation du personnel", path: "/dashboard/admin/affectation" },
 ];
 
 // ─── SIDEBAR ──────────────────────────────────────────────────────────────────
 
 function Sidebar({ open, setOpen }) {
     const navigate = useNavigate();
-    const [user, setUser]= useState(null)
+    const [user, setUser] = useState(null);
+
     const logOut = () => {
         localStorage.removeItem("token");
-        localStorage.removeItem("role")
+        localStorage.removeItem("role");
         navigate("/login");
     };
-    useEffect(()=>{
-        const token =localStorage.getItem('token')
-        if(token){
-            const decoded = jwtDecode(token)
-            setUser(decoded)
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            const decoded = jwtDecode(token);
+            setUser(decoded);
         }
-    },[])
+    }, []);
+
     return (
         <>
             {/* Overlay mobile */}
@@ -68,17 +71,13 @@ function Sidebar({ open, setOpen }) {
                 style={{ background: "linear-gradient(to bottom, #0f2557, #1a3a8f)" }}
             >
                 {/* Logo */}
-                <div className="flex items-center gap-3 px-6 py-5 border-b border-white/10">
+                <div className="flex items-center gap-3 px-6 py-5 border-b border-white/10 shrink-0">
                     <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center">
                         <GraduationCap size={20} className="text-white" />
                     </div>
                     <div>
                         <p className="text-white font-bold text-base leading-tight">
-                            {
-                                user && (
-                                    user.profil.etablissement.nom
-                                )
-                            }
+                            {user && user.profil.etablissement.nom}
                         </p>
                         <p className="text-blue-300 text-xs">Espace Administrateur</p>
                     </div>
@@ -90,12 +89,24 @@ function Sidebar({ open, setOpen }) {
                     </button>
                 </div>
 
-                {/* Navigation */}
-                <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+                {/* Navigation — scrollbar masquée */}
+                <nav
+                    className="flex-1 px-3 py-4 space-y-1"
+                    style={{
+                        overflowY: "auto",
+                        scrollbarWidth: "none",        /* Firefox */
+                        msOverflowStyle: "none",       /* IE / Edge legacy */
+                    }}
+                >
+                    {/* Masque la scrollbar webkit (Chrome, Safari) */}
+                    <style>{`
+                        aside nav::-webkit-scrollbar { display: none; }
+                    `}</style>
+
                     {NAV.map(({ icon: Icon, label, path, end }, index) => (
                         <NavLink
                             key={index}
-                            to={path} 
+                            to={path}
                             end={end}
                             onClick={() => setOpen(false)}
                             className={({ isActive }) =>
@@ -131,7 +142,7 @@ function Sidebar({ open, setOpen }) {
                 </nav>
 
                 {/* Profile + Logout */}
-                <div className="px-3 pb-5 pt-2 border-t border-white/10 space-y-2">
+                <div className="px-3 pb-5 pt-2 border-t border-white/10 space-y-2 shrink-0">
                     <div className="flex items-center gap-3 px-3 py-2">
                         <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-white text-sm font-bold shrink-0">
                             A
@@ -141,11 +152,7 @@ function Sidebar({ open, setOpen }) {
                                 Administrateur
                             </p>
                             <p className="text-blue-300 text-xs truncate">
-                                {
-                                    user && (
-                                        user.profil.nom +" "+ user.profil.prenom
-                                    )
-                                }
+                                {user && user.profil.nom + " " + user.profil.prenom}
                             </p>
                         </div>
                     </div>

@@ -10,16 +10,17 @@ const MODES = {
     importLabel: "élèves",
     needsClass: true,
     columns: [
-      { key: "matricule",     label: "Matricule",     required: true  },
-      { key: "nom",           label: "Nom",           required: true  },
-      { key: "prenom",        label: "Prénom",        required: true  },
-      { key: "dateNaissance", label: "dateNaissance", required: false },
-      { key: "lieuNaissance", label: "lieuNaissance", required: false },
-      { key: "sexe",          label: "Sexe",          required: false },
-      { key: "affecte",       label: "Affecté",       required: false },
-      { key: "boursier",      label: "Boursier",      required: false },
-      { key: "redoublant",    label: "Redoublant",    required: false },
-      { key: "nationalite",   label: "Nationalité",   required: false },
+      { key: "matricule",     label: "Matricule",      required: true  },
+      { key: "nom",           label: "Nom",            required: true  },
+      { key: "prenom",        label: "Prénom",         required: true  },
+      { key: "email",         label: "Email",          required: false },
+      { key: "dateNaissance", label: "dateNaissance",  required: false },
+      { key: "lieuNaissance", label: "lieuNaissance",  required: false },
+      { key: "sexe",          label: "Sexe",           required: false },
+      { key: "affecte",       label: "Affecté",        required: false },
+      { key: "boursier",      label: "Boursier",       required: false },
+      { key: "redoublant",    label: "Redoublant",     required: false },
+      { key: "nationalite",   label: "Nationalité",    required: false },
     ],
     accent: "#2563eb",
     accentLight: "#eff6ff",
@@ -37,9 +38,10 @@ const MODES = {
     importLabel: "enseignants",
     needsClass: false,
     columns: [
-      { key: "matricule", label: "Matricule", required: true },
-      { key: "nom",       label: "Nom",       required: true },
-      { key: "prenom",    label: "Prénom",    required: true },
+      { key: "matricule", label: "Matricule", required: true  },
+      { key: "nom",       label: "Nom",       required: true  },
+      { key: "prenom",    label: "Prénom",    required: true  },
+      { key: "email",     label: "Email",     required: false },
     ],
     accent: "#7c3aed",
     accentLight: "#f5f3ff",
@@ -48,4 +50,4 @@ const MODES = {
   },
 };
 
-export default MODES
+export default MODES;

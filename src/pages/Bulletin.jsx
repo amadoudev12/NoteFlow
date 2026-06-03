@@ -4,6 +4,7 @@ import bulletinService from "../../services/bulletinService"
 import toast, { Toaster } from "react-hot-toast"
 import noteService from "../../services/noteService"
 import { useNavigate } from "react-router-dom"
+import PageLoader from "../components/LoaderPage"
 
 function BulletinAdmin() {
   const [classes, setClasses] = useState([])
@@ -111,6 +112,12 @@ const isLoadingBtn = (classeId, type, matiereId) =>
     //         </div>
     //     )
     // }
+
+    if(downloading){
+        return (
+            <PageLoader message="generation en cours"/>
+        )
+    }
     return (
     <div className="p-6 ml-45 max-sm:ml-2 max-lg:ml-8">
         <Toaster
@@ -188,8 +195,11 @@ const isLoadingBtn = (classeId, type, matiereId) =>
                 Chargement...
             </div>
             ) : classesFiltrees.length === 0 ? (
-            <div className="py-10 text-center text-sm" style={{ color: "var(--color-text-secondary)" }}>
-                Aucune classe trouvée.
+            <div className="ml-45 max-sm:ml-2 max-lg:ml-8 flex items-center justify-center py-20">
+                <div className="text-center text-gray-400">
+                    {/* <div className="text-4xl mb-3">🏫</div> */}
+                    <p className="text-sm font-medium">Aucune classe disponible</p>
+                </div>
             </div>
             ) : (
             classesFiltrees.map((classe, i) => {

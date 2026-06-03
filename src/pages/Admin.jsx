@@ -83,21 +83,21 @@ export default function App() {
             if (statRes?.data) setStat(statRes.data);
 
             // ── Charts — await Promise.all (bug fix) ──
-            const [moyenneEvolution, moyenneClasses, moyenneMatieres, repartition, elevesForts, elevesFaibles] = await Promise.all([
+            const [moyenneEvolution, moyenneClasses, moyenneMatieres, repartition, nombreElevesFortByClasse, nombreElevesFaibleByClasse] = await Promise.all([
                 etablissementService.moyenneEvolution(),
                 etablissementService.moyenneClasses(),
                 etablissementService.moyenneMatieres(),
                 noteService.noteRepartition(),
-                adminService.fortesMoyenne(),
-                adminService.faiblesMoyenne()
+                adminService.nombreElevesFortByClasse(),
+                adminService.nombreElevesFaiblesByClasse()
             ]);
             setChartData({
                 courbeData:     moyenneEvolution?.data,
                 moyenneClasses: moyenneClasses?.data,
                 moyenneMatieres: moyenneMatieres?.data,
                 repartition:    repartition?.data,
-                elevesForts:    elevesForts?.data ,   // remplace par ton service si disponible
-                elevesFaibles:  elevesFaibles?.data // idem
+                elevesForts:    nombreElevesFortByClasse?.data ,   
+                elevesFaibles:  nombreElevesFaibleByClasse?.data 
             });
         } catch (err) {
             console.log('erreur serveur')

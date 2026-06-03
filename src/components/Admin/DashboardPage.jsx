@@ -9,11 +9,10 @@ import StatCard from "./StatCard";
 import LineSparkChart from "./miniLineChart";
 import BarChart from "./BarChart";
 import DonutChart from "./DonutChart";
-import StudentRow from "./StudentRow";
+import ClasseRow from "./ClasseRow";
 function DashboardPage({ stat, chartData, loading }) {
     const moyVal = stat?.moyenneEtablissement?.moyenneEtablissement;
     const moyColor = (moyVal ?? 0) >= 10 ? "success" : "danger";
-    console.log(moyVal)
     return (
         <div className="space-y-8">
 
@@ -60,17 +59,17 @@ function DashboardPage({ stat, chartData, loading }) {
         {/* ── Classements ── */}
         <section className="grid grid-cols-1 xl:grid-cols-2 gap-5">
             <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
-            <SectionHeader icon={Star} title="Top 5 meilleurs élèves" subtitle="Ce trimestre" color="amber" />
-            {loading
-                ? [...Array(5) || []].map((_, i) => <Skeleton key={i} className="h-12 mb-2" />)
-                : chartData.elevesForts?.elevesForts.map((e, i) => <StudentRow key={i} rank={i+1} {...e} isTop={true} />)
-            }
-            </div>
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+                <SectionHeader icon={Star} title="Top 5 meilleurs élèves" subtitle="Ce trimestre" color="amber" />
+                {loading
+                    ? [...Array(5) || []].map((_, i) => <Skeleton key={i} className="h-12 mb-2" />)
+                    : chartData.elevesForts?.result?.map((e, i) => <ClasseRow key={i} rank={i+1} {...e} isTop={true} />)
+                }
+                </div>
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
             <SectionHeader icon={AlertTriangle} title="Élèves en difficulté" subtitle="Suivi prioritaire" color="rose" />
             {loading
                 ? [...Array(5) || [] ].map((_, i) => <Skeleton key={i} className="h-12 mb-2" />)
-                : chartData.elevesFaibles?.elevesFaibles.map((e, i) => <StudentRow key={i} rank={i+1} {...e} isTop={false} />)
+                : chartData.elevesFaibles?.result?.map((e, i) => <ClasseRow key={i} classe={e.classe} nombre={e.nombre} isTop={false} />)
             }
             </div>
         </section>

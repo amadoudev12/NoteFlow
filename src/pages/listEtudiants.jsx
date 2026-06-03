@@ -11,11 +11,6 @@ const TYPE_OPTIONS = [
     { value: "devoir", label: "Devoir" },
     { value: "examen", label: "Examen" },
 ];
-const TRIMESTRE_OPTIONS = [
-    { value: "1", label: "1er Trimestre" },
-    { value: "2", label: "2ème Trimestre" },
-    { value: "3", label: "3ème Trimestre" },
-];
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 const getRoleFromStorage = () => localStorage.getItem("role") ?? "professeur"; // "admin" | "professeur"
@@ -130,7 +125,7 @@ function ConfigStep({ mode, config, setConfig, configErrors, onClose, onNext }) 
                         {configErrors.type && <p className="field-error">{configErrors.type}</p>}
                     </div>
                 )}
-
+{/* 
                 <div className="field-group">
                     <label className="field-label">Trimestre</label>
                     <div className="pill-grid col-3">
@@ -145,7 +140,7 @@ function ConfigStep({ mode, config, setConfig, configErrors, onClose, onNext }) 
                         ))}
                     </div>
                     {configErrors.trimestre && <p className="field-error">{configErrors.trimestre}</p>}
-                </div>
+                </div> */}
 
                 {!isAbsence && (
                     <div className="field-group">
@@ -166,6 +161,7 @@ function ConfigStep({ mode, config, setConfig, configErrors, onClose, onNext }) 
                         <input
                             type="text" placeholder="Ex : Mathématiques"
                             value={config.matiere}
+                            disabled
                             onChange={(e) => setConfig((p) => ({ ...p, matiere: e.target.value }))}
                             className="text-input"
                         />
@@ -192,7 +188,7 @@ export default function StudentTable() {
     const [mode, setMode] = useState(null); // "note" | "absence"
     const [step, setStep] = useState(null); // null | "config" | "saisie"
 
-    const [config, setConfig] = useState({ type: "", trimestre: "", coefficient: "", matiere: localStorage.getItem("matiere") ?? "" });
+    const [config, setConfig] = useState({ type: "",coefficient: "", matiere: localStorage.getItem("matiere") ?? "" });
     const [configErrors, setConfigErrors] = useState({});
     const [notes, setNotes] = useState({});
     const [absences, setAbsences] = useState({});
@@ -215,7 +211,7 @@ export default function StudentTable() {
     // ── Open modals ──
     const openMode = (m) => {
         setMode(m);
-        setConfig({ type: "", trimestre: "", coefficient: "", matiere: localStorage.getItem("matiere") ?? "" });
+        setConfig({ type: "", coefficient: "", matiere: localStorage.getItem("matiere") ?? "" });
         setConfigErrors({});
         setSubmitted(false);
         setStep("config");
@@ -231,7 +227,6 @@ export default function StudentTable() {
             if (!config.coefficient || isNaN(config.coefficient) || Number(config.coefficient) <= 0)
                 errors.coefficient = "Coefficient invalide.";
         }
-        if (!config.trimestre) errors.trimestre = "Veuillez choisir un trimestre.";
         setConfigErrors(errors);
         return Object.keys(errors).length === 0;
     };
@@ -283,7 +278,7 @@ export default function StudentTable() {
             if (mode === "note") {
                 const notesArray = eleves.map((e) => ({ matricule: e.matricule, note: Number(notes[e.matricule]) }));
                 const res = await noteService.postNote({ config, notes: notesArray });
-                if (res.data) localStorage.removeItem("matiere");
+                // if (res.data) localStorage.removeItem("matiere");
             } else {
                 const absArray = eleves.map((e) => ({ matricule: e.matricule, nombre: Number(absences[e.matricule].nombre), justifiee: absences[e.matricule].justifiee }));
                 await eleveService.postAbsence({ config, absences: absArray }); // adapter selon votre service
@@ -296,7 +291,6 @@ export default function StudentTable() {
     };
 
     const typeLabel = TYPE_OPTIONS.find((t) => t.value === config.type)?.label ?? "";
-    const trimestreLabel = TRIMESTRE_OPTIONS.find((t) => t.value === config.trimestre)?.label ?? "";
     if(!eleves.length){
         return (
             <div className="flex items-center justify-center">
@@ -400,7 +394,6 @@ export default function StudentTable() {
                                     </h2>
                                     <div className="tags-row">
                                         {mode === "note" && <TagPill color="indigo">{typeLabel}</TagPill>}
-                                        <TagPill color="violet">{trimestreLabel}</TagPill>
                                         {mode === "note" && <TagPill color="amber">Coeff. {config.coefficient}</TagPill>}
                                         {mode === "note" && <TagPill color="amber">{config.matiere}</TagPill>}
                                         {mode === "absence" && <TagPill color="rose">{config.matiere}</TagPill>}
