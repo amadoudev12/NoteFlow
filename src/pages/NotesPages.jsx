@@ -63,7 +63,7 @@ export default function NotesPage() {
         const res = await noteService.getNotes({ id_classe, id_matiere })
         if (res.data?.notes) setNotes(res.data.notes)
       } catch (err) {
-        console.log("erreur serveur")
+        console.log(err)
       } finally {
         setLoading(false)
       }

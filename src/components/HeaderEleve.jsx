@@ -65,14 +65,14 @@ function HeaderEleve({ eleve, onLogout }) {
     return (
         <header className="bg-white border border-[#dce8f9] rounded-2xl overflow-hidden mb-5 shadow-sm">
             {/* Gradient top bar */}
-            <div className="h-1 bg-gradient-to-r from-[#1565c0] via-[#1e88e5] to-[#64b5f6]" />
+            <div className="h-1 bg-linear-to-r from-[#1565c0] via-[#1e88e5] to-[#64b5f6]" />
 
             <div className="flex flex-wrap items-center justify-between gap-4 px-6 py-4">
 
                 {/* Infos élève */}
                 <div className="flex items-center gap-4">
                     {/* Avatar */}
-                    <div className="relative flex-shrink-0">
+                    <div className="relative shrink-0">
                         <div className="w-12 h-12 rounded-full bg-[#e6f1fb] border-2 border-[#b5d4f4] flex items-center justify-center text-[#185fa5] font-bold text-[15px] select-none">
                             {initiales}
                         </div>

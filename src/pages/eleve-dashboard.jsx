@@ -21,9 +21,9 @@ const getAppreciation = (moy) => {
 
 function ResumeParMatiere({ matiereMoyenne }) {
     return (
-        <div className="bg-white border border-[#dce8f9] rounded-2xl overflow-hidden flex flex-col max-h-[480px]">
+        <div className="bg-white border border-[#dce8f9] rounded-2xl overflow-hidden flex flex-col max-h-120">
             {/* Header */}
-            <div className="px-5 py-4 border-b border-[#eef4fc] flex items-center justify-between flex-shrink-0">
+            <div className="px-5 py-4 border-b border-[#eef4fc] flex items-center justify-between shrink-0">
                 <div>
                     <p className="text-[15px] font-semibold text-[#0c2c5a] m-0">Résumé par matière</p>
                     <p className="text-[12px] text-[#6c8db5] mt-0.5 mb-0">Vue d'ensemble de toutes les matières</p>
@@ -57,20 +57,20 @@ function ResumeParMatiere({ matiereMoyenne }) {
                                     key={i}
                                     className="hover:bg-[#f7faff] transition-colors"
                                 >
-                                    <td className={`px-3.5 py-[11px] text-[#1a3557] font-medium ${!isLast ? "border-b border-[#eef4fc]" : ""}`}>
+                                    <td className={`px-3.5 py-2.75 text-[#1a3557] font-medium ${!isLast ? "border-b border-[#eef4fc]" : ""}`}>
                                         {m.matiere}
                                     </td>
-                                    <td className={`px-3.5 py-[11px] text-[#1a3557] ${!isLast ? "border-b border-[#eef4fc]" : ""}`}>
+                                    <td className={`px-3.5 py-2.75 text-[#1a3557] ${!isLast ? "border-b border-[#eef4fc]" : ""}`}>
                                         <span className={`font-bold text-[15px] ${isGood ? "text-[#0d6b43]" : "text-[#b91c1c]"}`}>
                                             {isGood ? "▲" : "▼"} {Number(m.moyenne).toFixed(1)}
                                         </span>
                                     </td>
-                                    <td className={`px-3.5 py-[11px] text-[#1a3557] ${!isLast ? "border-b border-[#eef4fc]" : ""}`}>
+                                    <td className={`px-3.5 py-2.75 text-[#1a3557] ${!isLast ? "border-b border-[#eef4fc]" : ""}`}>
                                         <span className="bg-[#e6f1fb] text-[#185fa5] text-[11px] font-semibold px-2 py-0.5 rounded-md">
                                             ×{m.coefficient}
                                         </span>
                                     </td>
-                                    <td className={`px-3.5 py-[11px] text-[#1a3557] ${!isLast ? "border-b border-[#eef4fc]" : ""}`}>
+                                    <td className={`px-3.5 py-2.75 text-[#1a3557] ${!isLast ? "border-b border-[#eef4fc]" : ""}`}>
                                         <span className={`inline-block text-[11px] font-semibold px-2.5 py-1 rounded-full ${
                                             isGood
                                                 ? "bg-[#e8f7f0] text-[#0d6b43]"
@@ -101,28 +101,26 @@ function ResumeParMatiere({ matiereMoyenne }) {
 function NotesRecentes() {
     const navigate = useNavigate();
     const [notesRecentes, setNotesRecentes] = useState([]);
-
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (!token) { navigate("/login"); return; }
         const token_decoded = jwtDecode(token);
         const getNotes = async () => {
             try {
+                console.log("matricule",token_decoded.profil.matricule)
                 const res = await noteService.getNoteByMatricule(token_decoded.profil.matricule);
-                if (res.data) setNotesRecentes(res.data.noteFinal);
+                if (res.data) setNotesRecentes(res.data.notes);
             } catch {
                 console.error("Erreur lors du chargement des notes");
             }
         };
         getNotes();
     }, []);
-
     const notesAffichees = [...notesRecentes].reverse();
-
     return (
-        <div className="bg-white border border-[#dce8f9] rounded-2xl overflow-hidden flex flex-col max-h-[480px]">
+        <div className="bg-white border border-[#dce8f9] rounded-2xl overflow-hidden flex flex-col max-h-120">
             {/* Header */}
-            <div className="px-5 py-4 border-b border-[#eef4fc] flex items-center justify-between flex-shrink-0">
+            <div className="px-5 py-4 border-b border-[#eef4fc] flex items-center justify-between shrink-0">
                 <div>
                     <p className="text-[15px] font-semibold text-[#0c2c5a] m-0">Notes récentes</p>
                     <p className="text-[12px] text-[#6c8db5] mt-0.5 mb-0">Dernières évaluations enregistrées</p>
@@ -153,19 +151,19 @@ function NotesRecentes() {
                             const isLast = i === notesAffichees.length - 1;
                             return (
                                 <tr key={i} className="hover:bg-[#f7faff] transition-colors">
-                                    <td className={`px-3.5 py-[11px] text-[#1a3557] font-medium ${!isLast ? "border-b border-[#eef4fc]" : ""}`}>
+                                    <td className={`px-3.5 py-2.75 text-[#1a3557] font-medium ${!isLast ? "border-b border-[#eef4fc]" : ""}`}>
                                         {n.matiere}
                                     </td>
-                                    <td className={`px-3.5 py-[11px] text-[#6c8db5] ${!isLast ? "border-b border-[#eef4fc]" : ""}`}>
+                                    <td className={`px-3.5 py-2.75 text-[#6c8db5] ${!isLast ? "border-b border-[#eef4fc]" : ""}`}>
                                         {n.type}
                                     </td>
-                                    <td className={`px-3.5 py-[11px] text-[#1a3557] ${!isLast ? "border-b border-[#eef4fc]" : ""}`}>
+                                    <td className={`px-3.5 py-2.75 text-[#1a3557] ${!isLast ? "border-b border-[#eef4fc]" : ""}`}>
                                         <span className={`font-bold text-[16px] ${isGood ? "text-[#0d6b43]" : "text-[#b91c1c]"}`}>
                                             {n.valeur}
                                             <span className="text-[#93b4d4] text-[12px] font-normal">/20</span>
                                         </span>
                                     </td>
-                                    <td className={`px-3.5 py-[11px] text-[#1a3557] ${!isLast ? "border-b border-[#eef4fc]" : ""}`}>
+                                    <td className={`px-3.5 py-2.75 text-[#1a3557] ${!isLast ? "border-b border-[#eef4fc]" : ""}`}>
                                         <span className="bg-[#e6f1fb] text-[#185fa5] text-[11px] font-semibold px-2 py-0.5 rounded-md">
                                             ×{n.coefficient}
                                         </span>
@@ -239,7 +237,7 @@ export default function DashboardEleve() {
             className="min-h-screen p-6 bg-[#f0f6ff] box-border"
             style={{ fontFamily: "'DM Sans', system-ui, sans-serif" }}
         >
-            <div className="max-w-[1152px] mx-auto">
+            <div className="max-w-6xl mx-auto">
                 <HeaderEleve eleve={eleve} onLogout={() => setLoggedOut(true)} />
                 <StatsCards matiereMoyenne={matiereMoyenne} eleve={eleve} />
 

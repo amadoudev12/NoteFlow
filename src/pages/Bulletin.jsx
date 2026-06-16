@@ -69,7 +69,7 @@ const downloadFicheNote = async (classe, matiere) => {
         setDownloading({ id: classe.id, type: "fiche", matiereId: matiere.id })
         try {
             const res = await noteService.getListeNotes({id_classe:classe.id, id_matiere:matiere.id})
-            triggerDownload(res.data, `fiche_notes_${classe.libelle}_${matiere.libelle}.pdf`)
+            triggerDownload(res.data, `fiche_notes_${classe.libelle}_${matiere.nom}.pdf`)
         } catch (err) {
             console.log('erreur serveur')
         } finally {
