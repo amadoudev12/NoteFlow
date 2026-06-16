@@ -7,30 +7,25 @@ import userService from '../../services/userService'
 export default function FirstLogin() {
     const [user, setUser] = useState(null)
     const [profile, setProfile] = useState(null)
-
+    const [isEnseignant, setIsEnseignant] = useState(false)
     const navigate = useNavigate()
-
+    
     useEffect(() => {
-
         const token = localStorage.getItem('token')
-
-        if (!token) return
-
+        if (!token) {
+            navigate('/login')
+        }
         const decodedToken = jwtDecode(token)
-
         setUser(decodedToken.user)
         setProfile(decodedToken.profil)
-
     }, [])
 
     const updateUser = async (formData) => {
 
         try {
-
             const res = await userService.updateUser(formData)
             localStorage.setItem('token', res.data.token)
             const token = localStorage.getItem('token')
-            if (!token) return
             const decodedToken = jwtDecode(token)
             setUser(decodedToken.user)
             if (user?.role === "ENSEIGNANT") {
@@ -48,6 +43,7 @@ export default function FirstLogin() {
         <FirstLoginComponnent
             userName={profile?.nom || user?.login}
             onFormDataReady={updateUser}
+            user={user}
         />
     )
 }

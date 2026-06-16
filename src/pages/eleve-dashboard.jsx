@@ -17,131 +17,34 @@ const getAppreciation = (moy) => {
     return "Très insuffisant";
 };
 
-// ─── Scrollbar globale (injectée une seule fois) ─────────────────────────────
-
-const scrollbarCSS = `
-  .blue-scroll::-webkit-scrollbar {
-    width: 5px;
-  }
-  .blue-scroll::-webkit-scrollbar-track {
-    background: #f0f6ff;
-    border-radius: 10px;
-  }
-  .blue-scroll::-webkit-scrollbar-thumb {
-    background: #85b7eb;
-    border-radius: 10px;
-    transition: background 0.2s;
-  }
-  .blue-scroll::-webkit-scrollbar-thumb:hover {
-    background: #1e88e5;
-  }
-  .blue-scroll {
-    scrollbar-width: thin;
-    scrollbar-color: #85b7eb #f0f6ff;
-  }
-  .db-row:hover { background: #f7faff !important; }
-`;
-
-function InjectStyles() {
-    useEffect(() => {
-        const id = "db-eleve-styles";
-        if (!document.getElementById(id)) {
-            const style = document.createElement("style");
-            style.id = id;
-            style.textContent = scrollbarCSS;
-            document.head.appendChild(style);
-        }
-    }, []);
-    return null;
-}
-
-// ─── Styles partagés ────────────────────────────────────────────────────────
-
-const tableCard = {
-    background: "#fff",
-    border: "0.5px solid #dce8f9",
-    borderRadius: 16,
-    overflow: "hidden",
-    display: "flex",
-    flexDirection: "column",
-    maxHeight: 480,
-};
-
-const tableCardHeader = {
-    padding: "1rem 1.25rem 0.85rem",
-    borderBottom: "0.5px solid #eef4fc",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    flexShrink: 0,
-};
-
-const cardTitle = { fontSize: 15, fontWeight: 600, color: "#0c2c5a", margin: 0 };
-const cardSub   = { fontSize: 12, color: "#6c8db5", margin: "2px 0 0" };
-
-const thStyle = {
-    textAlign: "left",
-    padding: "9px 14px",
-    color: "#6c8db5",
-    fontSize: 10,
-    textTransform: "uppercase",
-    letterSpacing: "0.08em",
-    fontWeight: 600,
-    background: "#f7faff",
-    position: "sticky",
-    top: 0,
-    zIndex: 1,
-};
-
-const tdBase = {
-    padding: "11px 14px",
-    color: "#1a3557",
-    borderBottom: "0.5px solid #eef4fc",
-};
-
-const coefBadge = {
-    background: "#e6f1fb", color: "#185fa5",
-    fontSize: 11, fontWeight: 600,
-    padding: "2px 8px", borderRadius: 6,
-};
-
-const pillGood = {
-    background: "#e8f7f0", color: "#0d6b43",
-    padding: "3px 10px", borderRadius: 20,
-    fontSize: 11, fontWeight: 600, display: "inline-block",
-};
-
-const pillBad = {
-    background: "#fcebeb", color: "#791f1f",
-    padding: "3px 10px", borderRadius: 20,
-    fontSize: 11, fontWeight: 600, display: "inline-block",
-};
-
-const badgePill = {
-    background: "#e6f1fb", color: "#185fa5",
-    fontSize: 11, fontWeight: 600,
-    padding: "3px 10px", borderRadius: 20,
-};
-
 // ─── ResumeParMatiere ────────────────────────────────────────────────────────
 
 function ResumeParMatiere({ matiereMoyenne }) {
     return (
-        <div style={tableCard}>
-            <div style={tableCardHeader}>
+        <div className="bg-white border border-[#dce8f9] rounded-2xl overflow-hidden flex flex-col max-h-[480px]">
+            {/* Header */}
+            <div className="px-5 py-4 border-b border-[#eef4fc] flex items-center justify-between flex-shrink-0">
                 <div>
-                    <p style={cardTitle}>Résumé par matière</p>
-                    <p style={cardSub}>Vue d'ensemble de toutes les matières</p>
+                    <p className="text-[15px] font-semibold text-[#0c2c5a] m-0">Résumé par matière</p>
+                    <p className="text-[12px] text-[#6c8db5] mt-0.5 mb-0">Vue d'ensemble de toutes les matières</p>
                 </div>
-                <span style={badgePill}>{matiereMoyenne.length} matières</span>
+                <span className="bg-[#e6f1fb] text-[#185fa5] text-[11px] font-semibold px-3 py-1 rounded-full">
+                    {matiereMoyenne.length} matières
+                </span>
             </div>
 
-            <div className="blue-scroll" style={{ overflowY: "auto", flex: 1 }}>
-                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+            {/* Scrollable table */}
+            <div className="overflow-y-auto flex-1 scrollbar-thin scrollbar-thumb-[#85b7eb] scrollbar-track-[#f0f6ff]">
+                <table className="w-full border-collapse text-[13px]">
                     <thead>
                         <tr>
                             {["Matière", "Moyenne", "Coefficient", "Appréciation"].map((h) => (
-                                <th key={h} style={thStyle}>{h}</th>
+                                <th
+                                    key={h}
+                                    className="text-left px-3.5 py-2.5 text-[#6c8db5] text-[10px] uppercase tracking-widest font-semibold bg-[#f7faff] sticky top-0 z-10"
+                                >
+                                    {h}
+                                </th>
                             ))}
                         </tr>
                     </thead>
@@ -149,23 +52,39 @@ function ResumeParMatiere({ matiereMoyenne }) {
                         {matiereMoyenne.map((m, i) => {
                             const isGood = m.moyenne >= 10;
                             const isLast = i === matiereMoyenne.length - 1;
-                            const td = { ...tdBase, borderBottom: isLast ? "none" : tdBase.borderBottom };
                             return (
-                                <tr key={i} className="db-row" style={{ background: "transparent" }}>
-                                    <td style={{ ...td, fontWeight: 500 }}>{m.matiere}</td>
-                                    <td style={td}>
-                                        <span style={{ fontWeight: 700, fontSize: 15, color: isGood ? "#0d6b43" : "#b91c1c" }}>
+                                <tr
+                                    key={i}
+                                    className="hover:bg-[#f7faff] transition-colors"
+                                >
+                                    <td className={`px-3.5 py-[11px] text-[#1a3557] font-medium ${!isLast ? "border-b border-[#eef4fc]" : ""}`}>
+                                        {m.matiere}
+                                    </td>
+                                    <td className={`px-3.5 py-[11px] text-[#1a3557] ${!isLast ? "border-b border-[#eef4fc]" : ""}`}>
+                                        <span className={`font-bold text-[15px] ${isGood ? "text-[#0d6b43]" : "text-[#b91c1c]"}`}>
                                             {isGood ? "▲" : "▼"} {Number(m.moyenne).toFixed(1)}
                                         </span>
                                     </td>
-                                    <td style={td}><span style={coefBadge}>×{m.coefficient}</span></td>
-                                    <td style={td}><span style={isGood ? pillGood : pillBad}>{getAppreciation(m.moyenne)}</span></td>
+                                    <td className={`px-3.5 py-[11px] text-[#1a3557] ${!isLast ? "border-b border-[#eef4fc]" : ""}`}>
+                                        <span className="bg-[#e6f1fb] text-[#185fa5] text-[11px] font-semibold px-2 py-0.5 rounded-md">
+                                            ×{m.coefficient}
+                                        </span>
+                                    </td>
+                                    <td className={`px-3.5 py-[11px] text-[#1a3557] ${!isLast ? "border-b border-[#eef4fc]" : ""}`}>
+                                        <span className={`inline-block text-[11px] font-semibold px-2.5 py-1 rounded-full ${
+                                            isGood
+                                                ? "bg-[#e8f7f0] text-[#0d6b43]"
+                                                : "bg-[#fcebeb] text-[#791f1f]"
+                                        }`}>
+                                            {getAppreciation(m.moyenne)}
+                                        </span>
+                                    </td>
                                 </tr>
                             );
                         })}
                         {matiereMoyenne.length === 0 && (
                             <tr>
-                                <td colSpan={4} style={{ padding: "2rem", textAlign: "center", color: "#6c8db5", fontSize: 13 }}>
+                                <td colSpan={4} className="py-8 text-center text-[#6c8db5] text-[13px]">
                                     Aucune matière enregistrée
                                 </td>
                             </tr>
@@ -184,15 +103,15 @@ function NotesRecentes() {
     const [notesRecentes, setNotesRecentes] = useState([]);
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (!token) { navigate('/login'); return; }
+        const token = localStorage.getItem("token");
+        if (!token) { navigate("/login"); return; }
         const token_decoded = jwtDecode(token);
         const getNotes = async () => {
             try {
                 const res = await noteService.getNoteByMatricule(token_decoded.profil.matricule);
                 if (res.data) setNotesRecentes(res.data.noteFinal);
             } catch {
-                console.error('Erreur lors du chargement des notes');
+                console.error("Erreur lors du chargement des notes");
             }
         };
         getNotes();
@@ -201,21 +120,30 @@ function NotesRecentes() {
     const notesAffichees = [...notesRecentes].reverse();
 
     return (
-        <div style={tableCard}>
-            <div style={tableCardHeader}>
+        <div className="bg-white border border-[#dce8f9] rounded-2xl overflow-hidden flex flex-col max-h-[480px]">
+            {/* Header */}
+            <div className="px-5 py-4 border-b border-[#eef4fc] flex items-center justify-between flex-shrink-0">
                 <div>
-                    <p style={cardTitle}>Notes récentes</p>
-                    <p style={cardSub}>Dernières évaluations enregistrées</p>
+                    <p className="text-[15px] font-semibold text-[#0c2c5a] m-0">Notes récentes</p>
+                    <p className="text-[12px] text-[#6c8db5] mt-0.5 mb-0">Dernières évaluations enregistrées</p>
                 </div>
-                <span style={badgePill}>{notesRecentes.length} notes</span>
+                <span className="bg-[#e6f1fb] text-[#185fa5] text-[11px] font-semibold px-3 py-1 rounded-full">
+                    {notesRecentes.length} notes
+                </span>
             </div>
 
-            <div className="blue-scroll" style={{ overflowY: "auto", flex: 1 }}>
-                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+            {/* Scrollable table */}
+            <div className="overflow-y-auto flex-1 scrollbar-thin scrollbar-thumb-[#85b7eb] scrollbar-track-[#f0f6ff]">
+                <table className="w-full border-collapse text-[13px]">
                     <thead>
                         <tr>
                             {["Matière", "Type", "Note", "Coef."].map((h) => (
-                                <th key={h} style={thStyle}>{h}</th>
+                                <th
+                                    key={h}
+                                    className="text-left px-3.5 py-2.5 text-[#6c8db5] text-[10px] uppercase tracking-widest font-semibold bg-[#f7faff] sticky top-0 z-10"
+                                >
+                                    {h}
+                                </th>
                             ))}
                         </tr>
                     </thead>
@@ -223,24 +151,31 @@ function NotesRecentes() {
                         {notesAffichees.map((n, i) => {
                             const isGood = n.valeur >= 10;
                             const isLast = i === notesAffichees.length - 1;
-                            const td = { ...tdBase, borderBottom: isLast ? "none" : tdBase.borderBottom };
                             return (
-                                <tr key={i} className="db-row" style={{ background: "transparent" }}>
-                                    <td style={{ ...td, fontWeight: 500 }}>{n.matiere}</td>
-                                    <td style={{ ...td, color: "#6c8db5" }}>{n.type}</td>
-                                    <td style={td}>
-                                        <span style={{ fontWeight: 700, fontSize: 16, color: isGood ? "#0d6b43" : "#b91c1c" }}>
+                                <tr key={i} className="hover:bg-[#f7faff] transition-colors">
+                                    <td className={`px-3.5 py-[11px] text-[#1a3557] font-medium ${!isLast ? "border-b border-[#eef4fc]" : ""}`}>
+                                        {n.matiere}
+                                    </td>
+                                    <td className={`px-3.5 py-[11px] text-[#6c8db5] ${!isLast ? "border-b border-[#eef4fc]" : ""}`}>
+                                        {n.type}
+                                    </td>
+                                    <td className={`px-3.5 py-[11px] text-[#1a3557] ${!isLast ? "border-b border-[#eef4fc]" : ""}`}>
+                                        <span className={`font-bold text-[16px] ${isGood ? "text-[#0d6b43]" : "text-[#b91c1c]"}`}>
                                             {n.valeur}
-                                            <span style={{ color: "#93b4d4", fontSize: 12, fontWeight: 400 }}>/20</span>
+                                            <span className="text-[#93b4d4] text-[12px] font-normal">/20</span>
                                         </span>
                                     </td>
-                                    <td style={td}><span style={coefBadge}>×{n.coefficient}</span></td>
+                                    <td className={`px-3.5 py-[11px] text-[#1a3557] ${!isLast ? "border-b border-[#eef4fc]" : ""}`}>
+                                        <span className="bg-[#e6f1fb] text-[#185fa5] text-[11px] font-semibold px-2 py-0.5 rounded-md">
+                                            ×{n.coefficient}
+                                        </span>
+                                    </td>
                                 </tr>
                             );
                         })}
                         {notesAffichees.length === 0 && (
                             <tr>
-                                <td colSpan={4} style={{ padding: "2rem", textAlign: "center", color: "#6c8db5", fontSize: 13 }}>
+                                <td colSpan={4} className="py-8 text-center text-[#6c8db5] text-[13px]">
                                     Aucune note enregistrée
                                 </td>
                             </tr>
@@ -260,14 +195,11 @@ export default function DashboardEleve() {
     const [eleve, setEleve] = useState(null);
     const navigate = useNavigate();
 
-    const token = localStorage.getItem('token');
-    if(jwtDecode(token).user.firstLogin){
-        navigate('/modification')
-    }
-    if (!token) return navigate('/login');
-    const decode = jwtDecode(token)
-    // console.log(decode)
+    const token = localStorage.getItem("token");
+    if (!token) return navigate("/login");
+    const decode = jwtDecode(token);
     const matricule = decode.profil.matricule;
+
     useEffect(() => {
         eleveService.getEleve(matricule)
             .then(res => { if (res.data) setEleve(res.data.eleveInformation); })
@@ -282,31 +214,18 @@ export default function DashboardEleve() {
 
     if (loggedOut) {
         return (
-            <div style={{
-                minHeight: "100vh", display: "flex",
-                alignItems: "center", justifyContent: "center",
-                background: "#f0f6ff",
-            }}>
-                <div style={{
-                    textAlign: "center", padding: "2.5rem 3rem",
-                    background: "#fff", borderRadius: 20,
-                    border: "0.5px solid #dce8f9",
-                }}>
-                    <div style={{ fontSize: 48, marginBottom: 12 }}>👋</div>
-                    <h2 style={{ fontSize: 22, fontWeight: 600, color: "#0c2c5a", margin: "0 0 8px" }}>
+            <div className="min-h-screen flex items-center justify-center bg-[#f0f6ff]">
+                <div className="text-center px-12 py-10 bg-white rounded-2xl border border-[#dce8f9]">
+                    <div className="text-5xl mb-3">👋</div>
+                    <h2 className="text-[22px] font-semibold text-[#0c2c5a] mb-2">
                         À bientôt, {eleve?.eleve?.prenom} !
                     </h2>
-                    <p style={{ color: "#6c8db5", fontSize: 14, marginBottom: 24 }}>
+                    <p className="text-[#6c8db5] text-[14px] mb-6">
                         Vous avez été déconnecté avec succès.
                     </p>
                     <button
                         onClick={() => setLoggedOut(false)}
-                        style={{
-                            padding: "10px 28px", borderRadius: 10,
-                            background: "#1e88e5", color: "#fff",
-                            border: "none", fontWeight: 600, fontSize: 14,
-                            cursor: "pointer",
-                        }}
+                        className="px-7 py-2.5 rounded-xl bg-[#1e88e5] text-white font-semibold text-[14px] border-none cursor-pointer hover:bg-[#1565c0] transition-colors"
                     >
                         Se reconnecter
                     </button>
@@ -316,35 +235,23 @@ export default function DashboardEleve() {
     }
 
     return (
-        <>
-            <InjectStyles />
-            <div style={{
-                minHeight: "100vh",
-                padding: "1.5rem",
-                background: "#f0f6ff",
-                fontFamily: "'DM Sans', system-ui, sans-serif",
-                boxSizing: "border-box",
-            }}>
-                <div style={{ maxWidth: 1152, margin: "0 auto" }}>
-                    <HeaderEleve eleve={eleve} onLogout={() => setLoggedOut(true)} />
-                    <StatsCards matiereMoyenne={matiereMoyenne} eleve={eleve} />
-                    <div style={{
-                        display: "grid",
-                        gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-                        gap: "1.25rem",
-                        alignItems: "start",
-                    }}>
-                        <ResumeParMatiere matiereMoyenne={matiereMoyenne} />
-                        <NotesRecentes />
-                    </div>
-                    <p style={{
-                        textAlign: "center", color: "#93b4d4",
-                        fontSize: 11, marginTop: "1.5rem",
-                    }}>
-                        Dashboard Élève © 2025 — {eleve?.eleve?.prenom} {eleve?.eleve?.nom} · {eleve?.classe?.libelle}
-                    </p>
+        <div
+            className="min-h-screen p-6 bg-[#f0f6ff] box-border"
+            style={{ fontFamily: "'DM Sans', system-ui, sans-serif" }}
+        >
+            <div className="max-w-[1152px] mx-auto">
+                <HeaderEleve eleve={eleve} onLogout={() => setLoggedOut(true)} />
+                <StatsCards matiereMoyenne={matiereMoyenne} eleve={eleve} />
+
+                <div className="grid gap-5" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
+                    <ResumeParMatiere matiereMoyenne={matiereMoyenne} />
+                    <NotesRecentes />
                 </div>
+
+                <p className="text-center text-[#93b4d4] text-[11px] mt-6">
+                    Dashboard Élève © 2025 — {eleve?.eleve?.prenom} {eleve?.eleve?.nom} · {eleve?.classe?.libelle}
+                </p>
             </div>
-        </>
+        </div>
     );
 }

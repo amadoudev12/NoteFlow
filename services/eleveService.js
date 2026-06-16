@@ -9,6 +9,9 @@ const eleveService = {
         headers : {
             "Content-Type":"multipart/form-data"
         }
+    }),
+    getCertificat: ()=> axiosClient.get('eleves/certificat',{
+        responseType:"blob"
     })
 }
 

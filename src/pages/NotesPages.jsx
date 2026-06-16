@@ -71,18 +71,15 @@ export default function NotesPage() {
     fetchNotes()
   }, [id_classe, id_matiere])
 
-  // Aplatir la structure API : notes[] = tableau de tableaux
   const elevesData = notes.map((eleveNotes) => {
-    const first = eleveNotes[0]
-    if (!first) return null
-    const moy = calcMoyenne(first.notes)
+    const moy = calcMoyenne(eleveNotes.notes)
     return {
-      matricule:    first.infos.matricule,
-      nom:          first.infos.nom,
-      prenom:       first.infos.prenom,
-      matiere:      first.matiere,
-      coefficient:  first.coefficient_matiere,
-      notesList:    first.notes,
+      matricule:    eleveNotes.matricule,
+      nom:          eleveNotes.nom,
+      prenom:       eleveNotes.prenom,
+      matiere:      eleveNotes.matiere,
+      coefficient:  eleveNotes.coefficient_matiere,
+      notesList:    eleveNotes.notes,
       moyenne:      moy,
       appreciation: getAppreciation(moy),
     }

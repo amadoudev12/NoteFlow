@@ -7,6 +7,10 @@ const adminService = {
     nombreElevesFortByClasse : ()=> axiosClient.get('/admin/nombreElevesFort'),
     classeBest : ()=> axiosClient.get('/admin/cinq-meilleurByclasse'),
     mauvaisEleves : ()=> axiosClient.get('/admin/mauvais-eleves-classe'),
-    postAdmin : (data)=> axiosClient.post('admin/register', data)
+    postAdmin : (formData)=> axiosClient.post('admin/register', formData,{
+        headers : {
+            "Content-Type":"multipart/form-data"
+        }
+    })
 }
 export default adminService

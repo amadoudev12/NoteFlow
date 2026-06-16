@@ -1,12 +1,14 @@
 import { useNavigate } from "react-router-dom"
 import { useState } from "react"
 import eleveService from "../../services/eleveService"
+
 function HeaderEleve({ eleve, onLogout }) {
     const navigate = useNavigate()
     const [loading, setLoading] = useState(false)
+    const [certLoading, setCertLoading] = useState(false)
 
     const logOut = () => {
-        localStorage.removeItem('token')
+        localStorage.removeItem("token")
         onLogout()
     }
 
@@ -18,93 +20,164 @@ function HeaderEleve({ eleve, onLogout }) {
             const res = await eleveService.getEleveBulletin({ matricule, classe })
             const signedUrl = res.data?.url ?? res.data
             if (!signedUrl) throw new Error("URL manquante")
-            const link = document.createElement('a')
-            link.href = signedUrl
-            link.setAttribute('target', '_blank')
-            link.setAttribute('download', `bulletin_${matricule}.pdf`)
+            const link = document.createElement("a")
+            link.href = `${import.meta.env.VITE_API_URL}${signedUrl}`
+            link.setAttribute("target", "_blank")
+            link.setAttribute("download", `bulletin_${matricule}.pdf`)
             document.body.appendChild(link)
             link.click()
             document.body.removeChild(link)
         } catch (err) {
             console.log(err)
-            navigate('/500')
+            navigate("/500")
         } finally {
             setLoading(false)
         }
     }
 
-    const initiales = `${eleve?.eleve.prenom?.[0] ?? ''}${eleve?.eleve.nom?.[0] ?? ''}`.toUpperCase()
+    const triggerDownload = (data, filename) => {
+        const blob = new Blob([data], { type: "application/pdf" })
+        const url = window.URL.createObjectURL(blob)
+        const link = document.createElement("a")
+        link.href = url
+        link.setAttribute("download", filename)
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        window.URL.revokeObjectURL(url)
+    }
+
+    const telechargerCertificat = async () => {
+        setCertLoading(true)
+        try {
+            const res = await eleveService.getCertificat()
+            triggerDownload(res.data, `certificat-${eleve?.eleve.matricule}`)
+        } catch (err) {
+            console.log(err)
+            navigate("/500")
+        } finally {
+            setCertLoading(false)
+        }
+    }
+
+    const initiales = `${eleve?.eleve?.prenom?.[0] ?? ""}${eleve?.eleve?.nom?.[0] ?? ""}`.toUpperCase()
 
     return (
-        <header style={{
-            background: "#fff",
-            border: "0.5px solid #dce8f9",
-            borderRadius: 16,
-            overflow: "hidden",
-            marginBottom: "1.25rem"
-        }}>
-            <div style={{ height: 3, background: "linear-gradient(90deg, #1565c0, #1e88e5, #64b5f6)" }} />
+        <header className="bg-white border border-[#dce8f9] rounded-2xl overflow-hidden mb-5 shadow-sm">
+            {/* Gradient top bar */}
+            <div className="h-1 bg-gradient-to-r from-[#1565c0] via-[#1e88e5] to-[#64b5f6]" />
 
-            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 16, padding: "1.1rem 1.5rem" }}>
+            <div className="flex flex-wrap items-center justify-between gap-4 px-6 py-4">
 
                 {/* Infos élève */}
-                <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-                    <div style={{
-                        width: 48, height: 48, borderRadius: "50%",
-                        background: "#e6f1fb", color: "#185fa5",
-                        fontWeight: 600, fontSize: 15,
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                        border: "1.5px solid #b5d4f4", flexShrink: 0
-                    }}>
-                        {initiales}
+                <div className="flex items-center gap-4">
+                    {/* Avatar */}
+                    <div className="relative flex-shrink-0">
+                        <div className="w-12 h-12 rounded-full bg-[#e6f1fb] border-2 border-[#b5d4f4] flex items-center justify-center text-[#185fa5] font-bold text-[15px] select-none">
+                            {initiales}
+                        </div>
+                        {/* Online dot */}
+                        <span className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-400 border-2 border-white rounded-full" />
                     </div>
+
                     <div>
-                        <p style={{ fontSize: 10, color: "#5f82b0", textTransform: "uppercase", letterSpacing: "0.1em", margin: "0 0 2px" }}>
+                        <p className="text-[10px] text-[#5f82b0] uppercase tracking-widest mb-0.5 font-medium">
                             Tableau de bord élève
                         </p>
-                        <h1 style={{ fontSize: 18, fontWeight: 600, color: "#0c2c5a", margin: 0, lineHeight: 1.2 }}>
+                        <h1 className="text-[18px] font-semibold text-[#0c2c5a] leading-tight m-0">
                             {eleve?.eleve?.prenom}{" "}
-                            <span style={{ color: "#1e88e5" }}>{eleve?.eleve?.nom}</span>
+                            <span className="text-[#1e88e5]">{eleve?.eleve?.nom}</span>
                         </h1>
-                        <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 3, fontSize: 12, color: "#6c8db5" }}>
-                            <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 14l9-5-9-5-9 5 9 5z" />
-                            </svg>
-                            {eleve?.classe?.libelle}
-                            <span style={{ width: 3, height: 3, borderRadius: "50%", background: "#b5d4f4", display: "inline-block" }} />
-                            <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                                <rect x="3" y="4" width="18" height="18" rx="2" />
-                                <line x1="16" y1="2" x2="16" y2="6" />
-                                <line x1="8" y1="2" x2="8" y2="6" />
-                                <line x1="3" y1="10" x2="21" y2="10" />
-                            </svg>
-                            {eleve?.matricule_eleve}
+
+                        {/* Meta info */}
+                        <div className="flex items-center gap-2 mt-1 text-[12px] text-[#6c8db5] flex-wrap">
+                            {/* Classe */}
+                            <span className="flex items-center gap-1">
+                                <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 14l9-5-9-5-9 5 9 5z" />
+                                </svg>
+                                <span className="font-medium text-[#0c2c5a]">{eleve?.classe?.libelle}</span>
+                            </span>
+
+                            <span className="w-1 h-1 rounded-full bg-[#b5d4f4] inline-block" />
+
+                            {/* Matricule */}
+                            <span className="flex items-center gap-1">
+                                <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" />
+                                    <line x1="16" y1="2" x2="16" y2="6" />
+                                    <line x1="8" y1="2" x2="8" y2="6" />
+                                    <line x1="3" y1="10" x2="21" y2="10" />
+                                </svg>
+                                <span className="font-mono tracking-tight">{eleve?.matricule_eleve}</span>
+                            </span>
+
+                            <span className="w-1 h-1 rounded-full bg-[#b5d4f4] inline-block" />
+
+                            {/* Badge actif */}
+                            <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-600 text-[10px] font-semibold px-2 py-0.5 rounded-full border border-emerald-100">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />
+                                Actif
+                            </span>
                         </div>
                     </div>
                 </div>
 
                 {/* Boutons */}
-                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                    <button onClick={telechargerbulletin} style={{
-                        display: "flex", alignItems: "center", gap: 7,
-                        padding: "9px 16px", borderRadius: 10,
-                        fontSize: 13, fontWeight: 500, cursor: "pointer",
-                        background: "#e6f1fb", color: "#185fa5",
-                        border: "0.5px solid #85b7eb", transition: "all 0.15s"
-                    }}>
-                        <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                        </svg>
-                        {loading ? "En cours..." : "Imprimer bulletin"}
+                <div className="flex gap-2 flex-wrap">
+                    {/* Bulletin */}
+                    <button
+                        onClick={telechargerbulletin}
+                        disabled={loading}
+                        className="flex items-center gap-2 px-4 py-2 rounded-xl text-[13px] font-medium cursor-pointer bg-[#e6f1fb] text-[#185fa5] border border-[#85b7eb] hover:bg-[#cfe3f8] hover:border-[#5a9fd4] active:scale-95 transition-all duration-150 disabled:opacity-60 disabled:cursor-not-allowed"
+                    >
+                        {loading ? (
+                            <>
+                                <svg className="animate-spin" width="15" height="15" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                                </svg>
+                                En cours...
+                            </>
+                        ) : (
+                            <>
+                                <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                </svg>
+                                Bulletin
+                            </>
+                        )}
                     </button>
 
-                    <button onClick={logOut} style={{
-                        display: "flex", alignItems: "center", gap: 7,
-                        padding: "9px 16px", borderRadius: 10,
-                        fontSize: 13, fontWeight: 500, cursor: "pointer",
-                        background: "#fcebeb", color: "#791f1f",
-                        border: "0.5px solid #f09595", transition: "all 0.15s"
-                    }}>
+                    {/* Certificat */}
+                    <button
+                        onClick={telechargerCertificat}
+                        disabled={certLoading}
+                        className="flex items-center gap-2 px-4 py-2 rounded-xl text-[13px] font-medium cursor-pointer bg-[#f0fdf4] text-[#166534] border border-[#86efac] hover:bg-[#dcfce7] hover:border-[#4ade80] active:scale-95 transition-all duration-150 disabled:opacity-60 disabled:cursor-not-allowed"
+                    >
+                        {certLoading ? (
+                            <>
+                                <svg className="animate-spin" width="15" height="15" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                                </svg>
+                                En cours...
+                            </>
+                        ) : (
+                            <>
+                                <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                                </svg>
+                                Certificat
+                            </>
+                        )}
+                    </button>
+
+                    {/* Déconnexion */}
+                    <button
+                        onClick={logOut}
+                        className="flex items-center gap-2 px-4 py-2 rounded-xl text-[13px] font-medium cursor-pointer bg-[#fcebeb] text-[#791f1f] border border-[#f09595] hover:bg-[#fee2e2] hover:border-[#f87171] active:scale-95 transition-all duration-150"
+                    >
                         <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                         </svg>

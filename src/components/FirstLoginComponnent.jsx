@@ -37,8 +37,11 @@ const IconSchool = () => (
 // INDICATEUR D'ÉTAPES
 // ─────────────────────────────────────────────
 
-function StepIndicator({ current, done }) {
-  const steps = ["Identifiant", "Mot de passe", "Signature"];
+function StepIndicator({ current, done, isEnseignant }) {
+  const steps = ["Identifiant", "Mot de passe"]
+  if(isEnseignant){
+    steps.push('Signature')
+  }
   return (
     <div className="flex items-center justify-center mb-6">
       {steps.map((label, i) => {
@@ -63,7 +66,7 @@ function StepIndicator({ current, done }) {
                 {label}
               </span>
             </div>
-            {i < 2 && (
+            {i <= 1 && (
               <div className={`h-0.5 w-10 mx-1 mb-4 rounded transition-all ${done.has(id) ? "bg-blue-600" : "bg-blue-100"}`} />
             )}
           </React.Fragment>
@@ -162,7 +165,7 @@ function LoginSection({ register, errors, watch, onNext }) {
 // SECTION 2 : Mot de passe (8 caractères min seulement)
 // ─────────────────────────────────────────────
 
-function PasswordSection({ register, errors, watch, onNext }) {
+function PasswordSection({ register, errors, watch, onNext, isEnseignant, isLoading, }) {
   const [showPw, setShowPw] = useState(false);
   const [showCp, setShowCp] = useState(false);
 
@@ -216,10 +219,17 @@ function PasswordSection({ register, errors, watch, onNext }) {
           </button>
         </div>
       </Field>
-
-      <BtnPrimary onClick={onNext}>
-        Continuer →
-      </BtnPrimary>
+      {
+        isEnseignant ? (
+          <BtnPrimary onClick={onNext}>
+            Continuer →
+          </BtnPrimary>
+        ) : (
+          <BtnPrimary type="submit" disabled={isLoading}>
+            ✓ Terminer la configuration
+          </BtnPrimary>
+        )
+      }
     </div>
   );
 }
@@ -313,7 +323,10 @@ const schema = z
 export default function FirstLoginComponnent({
   userName,
   onFormDataReady,
+  user
 }) {
+  const isEnseignant = user?.role == "ENSEIGNANT"
+  console.log(isEnseignant)
   const sigRef = useRef(null);
   const [currentStep, setCurrentStep] = useState(1);
   const [completedSteps, setCompletedSteps] = useState(new Set());
@@ -348,18 +361,25 @@ export default function FirstLoginComponnent({
     pwOk ? next.add(2) : next.delete(2);
     setCompletedSteps(next);
   }, [watchedLogin, watchedPassword, watchedConfirm, errors.login, errors.password, errors.confirmPassword]);
-
-  const progress = Math.round((completedSteps.size / 3) * 100);
+  const totalSteps = isEnseignant ? 3 : 2
+  const progress = Math.round((completedSteps.size / totalSteps) * 100);
 
   const handleNext = useCallback(async () => {
     if (currentStep === 1) {
       const ok = await trigger("login");
-      if (ok) { setCompletedSteps((p) => new Set(p).add(1)); setCurrentStep(2); }
-    } else if (currentStep === 2) {
+      if (ok) {
+        setCompletedSteps((p) => new Set(p).add(1));
+        setCurrentStep(2);
+      }
+    } else if (currentStep === 2 && isEnseignant) {
+      // Seulement pour les enseignants : valider et passer à l'étape 3
       const ok = await trigger(["password", "confirmPassword"]);
-      if (ok) { setCompletedSteps((p) => new Set(p).add(2)); setCurrentStep(3); }
+      if (ok) {
+        setCompletedSteps((p) => new Set(p).add(2));
+        setCurrentStep(3);
+      }
     }
-  }, [currentStep, trigger]);
+  }, [currentStep, trigger, isEnseignant]);
 
   const onSignatureEnd = useCallback(() => {
     if (sigRef.current && !sigRef.current.isEmpty()) {
@@ -377,36 +397,44 @@ export default function FirstLoginComponnent({
   }, []);
 
   const onSubmit = useCallback(async (values) => {
-    console.log(values)
-    if (!sigRef.current || sigRef.current.isEmpty()) {
-      setSignatureError("Veuillez apposer votre signature avant de continuer");
-      return;
-    }
-    setIsLoading(true);
-    try {
-      const signatureBlob = await new Promise((resolve, reject) => {
+  if (isEnseignant && (!sigRef.current || sigRef.current.isEmpty())) {
+    setSignatureError("Veuillez apposer votre signature avant de continuer");
+    return;
+  }
+  setIsLoading(true);
+  try {
+    let signatureBlob = null; // ← déclaré ici, accessible partout
+
+    if (isEnseignant) {
+      signatureBlob = await new Promise((resolve, reject) => {
         sigRef.current.getCanvas().toBlob(
           (blob) => (blob ? resolve(blob) : reject(new Error("Conversion échouée"))),
           "image/png"
         );
       });
-      const formData = new FormData();
-      formData.append("login", values.login);
-      formData.append("password", values.password);
-      formData.append("signature", signatureBlob, "signature.png");
-      console.log(formData.values)
-      if (onFormDataReady) await onFormDataReady(formData);
-      setFormDataResult({ login: values.login, signatureSize: signatureBlob.size });
-      setSuccess(true);
-    } catch (err) {
-      console.error("Erreur :", err);
-    } finally {
-      setIsLoading(false);
     }
-  }, [onFormDataReady]);
+
+    const formData = new FormData();
+    formData.append("login", values.login);
+    formData.append("password", values.password);
+    if (isEnseignant && signatureBlob) {
+      formData.append("signature", signatureBlob, "signature.png");
+    }
+
+    if (onFormDataReady) await onFormDataReady(formData);
+    if (isEnseignant) {
+      setFormDataResult({ login: values.login, signatureSize: signatureBlob.size ?? "" });
+    }
+    setSuccess(true);
+  } catch (err) {
+    console.error("Erreur :", err);
+  } finally {
+    setIsLoading(false);
+  }
+}, [onFormDataReady, isEnseignant]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-blue-100 to-blue-200 flex items-center justify-center p-6 font-sans">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 via-blue-100 to-blue-200 flex items-center justify-center p-6 font-sans">
       <div className="w-full max-w-md">
 
         {/* En-tête */}
@@ -441,7 +469,7 @@ export default function FirstLoginComponnent({
                 </p>
               </div>
 
-              <StepIndicator current={currentStep} done={completedSteps} />
+              <StepIndicator current={currentStep} done={completedSteps} isEnseignant={isEnseignant} />
 
               <div className="mb-6">
                 <div className="flex justify-between mb-1.5">
@@ -461,17 +489,28 @@ export default function FirstLoginComponnent({
                   <LoginSection register={register} errors={errors} watch={watch} onNext={handleNext} />
                 )}
                 {currentStep === 2 && (
-                  <PasswordSection register={register} errors={errors} watch={watch} onNext={handleNext} />
-                )}
-                {currentStep === 3 && (
-                  <SignatureSection
-                    sigRef={sigRef}
-                    signatureError={signatureError}
-                    onSignatureEnd={onSignatureEnd}
-                    onClear={clearSignature}
-                    isLoading={isLoading}
+                  <PasswordSection 
+                      register={register} 
+                      errors={errors} 
+                      watch={watch} 
+                      onNext={handleNext} 
+                      isEnseignant={isEnseignant}
+                      isLoading={isLoading}
                   />
                 )}
+                {
+                  isEnseignant && (
+                    currentStep === 3 && (
+                      <SignatureSection
+                        sigRef={sigRef}
+                        signatureError={signatureError}
+                        onSignatureEnd={onSignatureEnd}
+                        onClear={clearSignature}
+                        isLoading={isLoading}
+                      />
+                    )
+                  )
+                }
               </form>
             </>
           )}
