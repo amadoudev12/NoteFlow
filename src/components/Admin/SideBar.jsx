@@ -4,34 +4,36 @@ import {
     LogOut,
     ChevronRight,
     LayoutDashboard,
-    CalendarDays,
-    ClipboardMinus,
-    ScrollText,
-    Building2,
-    Medal,
-    TrendingDown,
-    BookMarked,
+    CalendarRange,
     GraduationCap,
-    FileUp,
-    UserCog,
+    BarChart3,
+    FileText,
+    School,
+    Award,
+    AlertTriangle,
+    BookOpen,
+    Users,
+    Upload,
+    UserCheck
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import etablissementService from "../../../services/etablissementService";
 
 // ─── NAV CONFIG ───────────────────────────────────────────────────────────────
 
 const NAV = [
-  { icon: LayoutDashboard,  label: "Tableau de bord",         path: "/dashboard/admin",                     end: true },
-  { icon: CalendarDays,     label: "Gestion des trimestres",   path: "/dashboard/admin/trimestre" },
-  { icon: ClipboardMinus,   label: "Suivi des absences",       path: "/dashboard/admin/absences" },
-  { icon: ScrollText,       label: "Bulletins & évaluations",  path: "/dashboard/bulletins" },
-  { icon: Building2,        label: "Mon établissement",        path: "/dashboard/admin/etablissement" },
-  { icon: Medal,            label: "Élèves distingués",        path: "/dashboard/admin/meilleur-eleves" },
-  { icon: TrendingDown,     label: "Élèves en difficulté",     path: "/dashboard/admin/mauvais-eleves" },
-  { icon: BookMarked,       label: "Matières enseignées",      path: "/dashboard/admin/matieres" },
-  { icon: GraduationCap,    label: "Gestion des classes",      path: "/dashboard/admin/classes" },
-  { icon: FileUp,           label: "Importation de données",   path: "/dashboard/admin/import" },
-  { icon: UserCog,          label: "Affectation du personnel", path: "/dashboard/admin/affectation" },
+    { icon: LayoutDashboard, label: "Vue d'ensemble",            path: "/dashboard/admin",                   end: true },
+    { icon: CalendarRange,   label: "Périodes & trimestres",     path: "/dashboard/admin/trimestre" },
+    { icon: BarChart3,       label: "Statistiques des classes",  path: "/dashboard/admin/statistique" },
+    { icon: FileText,        label: "Bulletins scolaires",       path: "/dashboard/bulletins" },
+    { icon: School,          label: "Établissement",             path: "/dashboard/admin/etablissement" },
+    { icon: Award,           label: "Élèves distingués",         path: "/dashboard/admin/meilleur-eleves" },
+    { icon: AlertTriangle,   label: "Élèves en difficulté",      path: "/dashboard/admin/mauvais-eleves" },
+    { icon: BookOpen,        label: "Matières",                  path: "/dashboard/admin/matieres" },
+    { icon: Users,           label: "Classes",                   path: "/dashboard/admin/classes" },
+    { icon: Upload,          label: "Import de données",         path: "/dashboard/admin/import" },
+    { icon: UserCheck,       label: "Affectation du personnel",  path: "/dashboard/admin/affectation" },
 ];
 
 // ─── SIDEBAR ──────────────────────────────────────────────────────────────────
@@ -39,19 +41,29 @@ const NAV = [
 function Sidebar({ open, setOpen }) {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
-
+    const [etablissement, setEtablissement] = useState(null)
     const logOut = () => {
         localStorage.removeItem("token");
         localStorage.removeItem("role");
         navigate("/login");
     };
 
-    useEffect(() => {
+    useEffect( () => {
+        let decoded 
         const token = localStorage.getItem("token");
         if (token) {
-            const decoded = jwtDecode(token);
+            decoded = jwtDecode(token);
             setUser(decoded);
         }
+        const getEtablissementInfo = async ()=>{
+            try {
+                const res = await etablissementService.getEtablissement(decoded.user.id)
+                setEtablissement(res.data.etablissement)
+            }catch(err){
+                console.log(err.message)
+            }
+        }
+        getEtablissementInfo()
     }, []);
 
     return (
@@ -77,7 +89,7 @@ function Sidebar({ open, setOpen }) {
                     </div>
                     <div>
                         <p className="text-white font-bold text-base leading-tight">
-                            {user && user.profil.etablissement.nom}
+                            {etablissement?.nom}
                         </p>
                         <p className="text-blue-300 text-xs">Espace Administrateur</p>
                     </div>

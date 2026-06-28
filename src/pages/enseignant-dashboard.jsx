@@ -114,9 +114,9 @@ function DashboardContent({ user }) {
   const [showNotesPanel, setShowNotesPanel] = useState(false)
   const navigate = useNavigate()
   const token = localStorage.getItem('token');
-  if(jwtDecode(token).user.firstLogin){
-        navigate('/modification')
-  }
+  // if(jwtDecode(token).user.firstLogin){
+  //       navigate('/modification')
+  // }
   const logOut = ()=>{
     localStorage.clear()
     navigate('/')

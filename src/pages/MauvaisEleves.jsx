@@ -55,9 +55,9 @@ function ClassCard({ classData, delay }) {
         <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
             <h2 className="text-base font-semibold text-gray-800">{classData.classe}</h2>
-            <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-violet-100 text-violet-700">
+            {/* <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-violet-100 text-violet-700">
                 Top élèves
-            </span>
+            </span> */}
             </div>
             <span className="text-xs text-gray-400">
             {top5.length} élève{top5.length !== 1 ? "s" : ""}

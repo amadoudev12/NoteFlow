@@ -56,9 +56,9 @@ const handleSelect = (item) => {
                     <div className={`w-2.5 h-2.5 rounded-full shrink-0 ${color.dot}`} />
                     <div>
                       <p className="text-sm font-semibold text-slate-800 group-hover:text-blue-800">
-                        {item.classe?.libelle}
+                        {item.matiere.nom} 
                       </p>
-                      <p className="text-xs text-slate-400 mt-0.5">{item.matiere.nom}</p>
+                      <p className="text-xs text-slate-400 mt-0.5">{item.classe?.libelle}</p>
                     </div>
                   </div>
                   <ChevronRight size={15} className="text-slate-300 group-hover:text-blue-500 transition" />

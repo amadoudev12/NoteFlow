@@ -233,6 +233,7 @@ function EditModal({ affectation, classes, matieres, enseignants, affectations, 
 export default function AffectationPage() {
   const [mode, setMode] = useState("enseignant");
 
+  const [openForm, setOpenForm] = useState(false)
   const [classes, setClasses] = useState([]);
   const [matieres, setMatieres] = useState([]);
   const [enseignants, setEnseignants] = useState([]);
@@ -389,7 +390,7 @@ export default function AffectationPage() {
   return (
     <div className="p-4  ml-45 sm:p-6 space-y-5 max-sm:ml-2 max-lg:ml-1">
       {/* ── Header ── */}
-      <div className="flex flex-wrap items-center gap-4">
+      <div className="flex flex-wrap items-center gap-4 justify-between">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center">
             <GraduationCap size={20} className="text-white" />
@@ -399,8 +400,15 @@ export default function AffectationPage() {
             <p className="text-xs text-slate-400">Associez enseignants, classes et matières</p>
           </div>
         </div>
+        <button onClick={()=>{setOpenForm(!openForm)}}>
+            <div className="sm:ml-auto flex items-center gap-2 bg-blue-600 border border-slate-200 rounded-xl px-4 py-2 text-sm text-white shadow-sm self-start sm:self-auto">
+              {/* <Icon size={14} className={accentIconText} /> */}
+              <span>
+                Ajouter une affectation
+              </span>
+            </div>
+        </button>
       </div>
-
       {/* ── Toast ── */}
       <Toast toast={toast} />
 
@@ -415,37 +423,41 @@ export default function AffectationPage() {
       {mode === "enseignant" && (
         <>
           {/* Form Card */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-5">
-            <div className="flex items-center gap-2.5 mb-4">
-              <div className="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center">
-                <UserPlus size={14} className="text-blue-600" />
-              </div>
-              <h2 className="font-semibold text-slate-700 text-sm">Nouvelle affectation</h2>
-            </div>
-
-            {loading ? (
-              <div className="flex items-center gap-3 py-5 text-slate-400 text-sm">
-                <Loader2 size={16} className="animate-spin" />
-                Chargement des données…
-              </div>
-            ) : (
-              <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
-                  <SelectField label="Classe" icon={BookOpen} value={form.classeId} onChange={(v) => setField("classeId", v)} options={classeOptions} placeholder="Choisir une classe" error={errors.classeId} />
-                  <SelectField label="Matière" icon={BookOpen} value={form.matiereId} onChange={(v) => setField("matiereId", v)} options={matiereOptions} placeholder="Choisir une matière" error={errors.matiereId} />
-                  <SelectField label="Enseignant" icon={Users} value={form.matricule} onChange={(v) => setField("matricule", v)} options={enseignantOptions} placeholder="Choisir un enseignant" error={errors.matricule} />
-                  <CoeffField value={form.coeff} onChange={(v) => setField("coeff", v)} error={errors.coeff} />
+          {
+            openForm && (
+              <div className="bg-white rounded-2xl border border-slate-200 p-5">
+                <div className="flex items-center gap-2.5 mb-4">
+                  <div className="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center">
+                    <UserPlus size={14} className="text-blue-600" />
+                  </div>
+                  <h2 className="font-semibold text-slate-700 text-sm">Nouvelle affectation</h2>
                 </div>
-                <button
-                  onClick={handleAffecter}
-                  className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-sm font-semibold rounded-lg transition-all"
-                >
-                  <UserPlus size={14} />
-                  Affecter
-                </button>
-              </>
-            )}
-          </div>
+
+                {loading ? (
+                  <div className="flex items-center gap-3 py-5 text-slate-400 text-sm">
+                    <Loader2 size={16} className="animate-spin" />
+                    Chargement des données…
+                  </div>
+                ) : (
+                  <>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+                      <SelectField label="Classe" icon={BookOpen} value={form.classeId} onChange={(v) => setField("classeId", v)} options={classeOptions} placeholder="Choisir une classe" error={errors.classeId} />
+                      <SelectField label="Matière" icon={BookOpen} value={form.matiereId} onChange={(v) => setField("matiereId", v)} options={matiereOptions} placeholder="Choisir une matière" error={errors.matiereId} />
+                      <SelectField label="Enseignant" icon={Users} value={form.matricule} onChange={(v) => setField("matricule", v)} options={enseignantOptions} placeholder="Choisir un enseignant" error={errors.matricule} />
+                      <CoeffField value={form.coeff} onChange={(v) => setField("coeff", v)} error={errors.coeff} />
+                    </div>
+                    <button
+                      onClick={handleAffecter}
+                      className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-sm font-semibold rounded-lg transition-all"
+                    >
+                      <UserPlus size={14} />
+                      Affecter
+                    </button>
+                  </>
+                )}
+              </div>
+            )
+          }
 
           {/* Table Card */}
           <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">

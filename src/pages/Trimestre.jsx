@@ -2,6 +2,7 @@ import { Calendar, Plus, Check, Trash2, BookOpen } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cls } from "../utils/cls";
 import trimestreService from "../../services/trimestreService";
+import toast, {Toaster} from "react-hot-toast";
 
 function TrimestresPage() {
   const [trimestres, setTrimestres] = useState([]);
@@ -74,8 +75,10 @@ function TrimestresPage() {
     }
 
     try {
-      await trimestreService.postTrimestre(form);
-      setSuccess(true);
+      const resPost = await trimestreService.postTrimestre(form);
+      if(resPost.data) {
+        toast.success('Trimestre ajoute avec succe')
+      }
       setForm({ nom: "", debut: "", fin: "" });
       // Recharger la liste
       const res = await trimestreService.getTrimestres();
@@ -97,7 +100,10 @@ function TrimestresPage() {
 
   const handleDelete = async (id) => {
     try {
-      await trimestreService.deleteTrimestre(id);
+      const res = await trimestreService.deleteTrimestre(id);
+      if(res.data){
+        toast.success("trimestre supprimer")
+      }
       setTrimestres(prev => prev.filter(t => t.id_trimestre !== id));
     } catch (err) {
       setTrimestres(prev => prev.filter(t => t.id_trimestre !== id));
@@ -115,6 +121,10 @@ function TrimestresPage() {
 
   return (
     <div className="ml-45 max-sm:ml-2 max-lg:ml-8">
+        <Toaster
+            position="top-center"
+            reverseOrder={false}
+        />
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Form */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
@@ -174,11 +184,11 @@ function TrimestresPage() {
               <Plus size={16} /> Créer le trimestre
             </button>
 
-            {success && (
+            {/* {success && (
               <div className="flex items-center gap-2 text-emerald-600 bg-emerald-50 rounded-xl px-4 py-2.5 text-sm animate-pulse">
                 <Check size={16} /> Trimestre ajouté avec succès !
               </div>
-            )}
+            )} */}
           </div>
         </div>
 

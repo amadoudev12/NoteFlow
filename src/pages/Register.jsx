@@ -103,7 +103,7 @@ function StepIndicator({ current }) {
               </span>
             </div>
             {i < steps.length - 1 && (
-              <div className={`w-16 sm:w-24 h-0.5 mx-1 mb-5 transition-all duration-300 ${done ? 'bg-blue-400' : 'bg-gray-200'}`} />
+              <div className={`w-14 sm:w-11 h-0.5 mx-1 mb-5 transition-all duration-300 ${done ? 'bg-blue-400' : 'bg-gray-200'}`} />
             )}
           </div>
         );

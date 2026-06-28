@@ -4,6 +4,7 @@ import classeService from "../../services/classeService";
 import noteService from "../../services/noteService";
 import '../styles/listEtudiant.css'
 import eleveService from "../../services/eleveService";
+import { jwtDecode } from "jwt-decode";
 // import absenceService from "../../services/absenceService"; // à créer selon votre architecture
 
 const TYPE_OPTIONS = [
@@ -13,7 +14,12 @@ const TYPE_OPTIONS = [
 ];
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
-const getRoleFromStorage = () => localStorage.getItem("role") ?? "professeur"; // "admin" | "professeur"
+const getRoleFromStorage = () => {
+    const token = localStorage.getItem("token")
+    const decodeToken = jwtDecode(token)
+    const role = decodeToken.user.role
+    return role
+}// "admin" | "professeur"
 
 // ─── Sub-components ─────────────────────────────────────────────────────────
 function ModalOverlay({ children }) {
@@ -183,7 +189,6 @@ export default function StudentTable() {
     const role = getRoleFromStorage(); // "admin" | "professeur"
     const isAdmin = role === "ADMIN";
     const isProfesseur = role === "ENSEIGNANT";
-
     const [eleves, setEleves] = useState([]);
     const [mode, setMode] = useState(null); // "note" | "absence"
     const [step, setStep] = useState(null); // null | "config" | "saisie"

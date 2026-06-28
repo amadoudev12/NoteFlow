@@ -19,7 +19,7 @@ function StatCard({ classe, index, visible }) {
 
     return (
         <Link
-        to={`/dashboard-admin/liste-eleve/${classe?.id}`}
+        to={`/dashboard/admin/statistique/classe/${classe?.id}`}
         style={{
             '--accent': palette.accent,
             '--card-bg': palette.bg,
@@ -221,7 +221,7 @@ export default function ListClasse() {
             {loading
                 ? Array.from({ length: 8 }).map((_, i) => <div key={i} className="skeleton-card" style={{ animationDelay: `${i * 100}ms` }} />)
                 : classes?.map((classeItem, i) => (
-                <StatCard key={i} classe={classeItem} index={i} visible={visible} />
+                    <StatCard key={i} classe={classeItem} index={i} visible={visible} />
                 ))
             }
             </div>

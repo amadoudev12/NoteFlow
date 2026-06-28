@@ -74,7 +74,7 @@ function ClassCard({ classData, delay }) {
             </div>
         ) : (
             <div className="flex flex-col gap-1">
-            {top5.map((eleve, i) => (
+            {top5?.map((eleve, i) => (
                 <StudentRow
                 key={`${eleve.nom}-${eleve.prenom}-${i}`}
                 eleve={eleve}

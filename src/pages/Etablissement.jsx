@@ -1,8 +1,9 @@
-    import { Building2, Check, GraduationCap,  Phone, Mail, MapPin,  Hash, BadgeCheck, User } from "lucide-react";
-    import { useEffect, useState } from "react";
-    import { SectionTitle } from "./Admin";
+import { Building2, Check, GraduationCap,  Phone, Mail, MapPin,  Hash, BadgeCheck, User } from "lucide-react";
+import { useEffect, useState } from "react";
+import { SectionTitle } from "./Admin";
 import etablissementService from "../../services/etablissementService";
 import { jwtDecode } from "jwt-decode";
+import toast, { Toaster } from "react-hot-toast"
 export default function EtablissementPage() {
     const [id, setId] = useState(null)
     useEffect(()=>{
@@ -56,8 +57,10 @@ export default function EtablissementPage() {
         }
         try {
             form.admin_id = id
-            await etablissementService.postEtablissement(form)
-            setSaved(true)
+            const res = await etablissementService.postEtablissement(form)
+            if(res.status == 201) {
+                toast.success("Informations sauvegardées avec succès ")
+            }
         }catch(err){
             console.log('erreur serveur')
         }
@@ -75,6 +78,10 @@ export default function EtablissementPage() {
 
     return (
         <div className="ml-45 max-sm:ml-2 max-lg:ml-8">
+            <Toaster
+                position="top-center"
+                reverseOrder={false}
+            />
         <SectionTitle icon={Building2} title="Établissement" subtitle="Informations et configuration de l'école" />
         <div className="max-w-2xl">
             <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-8">
@@ -102,11 +109,11 @@ export default function EtablissementPage() {
                 >
                 <Check size={16} /> Sauvegarder les modifications
                 </button>
-                {saved && (
+                {/* {saved && (
                 <div className="flex items-center gap-2 text-emerald-600 bg-emerald-50 rounded-xl px-4 py-3 text-sm">
                     <Check size={16} /> Informations sauvegardées avec succès !
                 </div>
-                )}
+                )} */}
             </div>
             </div>
         </div>

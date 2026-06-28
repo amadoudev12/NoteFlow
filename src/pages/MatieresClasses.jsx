@@ -210,6 +210,7 @@ export default function MatieresClassesPage() {
   const cfg = CONFIG[type];
   const Icon = cfg.icon;
 
+  const [openForm, setOpenForm] = useState(false)
   const [items, setItems] = useState([]);
   const [newNom, setNewNom] = useState("");
   const [addError, setAddError] = useState("");
@@ -348,57 +349,69 @@ useEffect(() => {
               {items.length !== 1 ? cfg.labelPlural.toLowerCase() : cfg.label.toLowerCase()}
             </span>
           </div>
+          <button onClick={()=>{setOpenForm(!openForm)}}>
+            <div className="sm:ml-auto flex items-center gap-2 bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-600 shadow-sm self-start sm:self-auto">
+              {/* <Icon size={14} className={accentIconText} /> */}
+              <span>
+                Ajouter
+              </span>
+            </div>
+          </button>
         </div>
 
         {/* ── Toast ── */}
         {toast && <Toast toast={toast} />}
 
         {/* ── Add Form Card ── */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-          <div className="flex items-center gap-3 mb-5">
-            <div className={`w-8 h-8 rounded-xl ${accentIconBg} flex items-center justify-center`}>
-              <Plus size={16} className={accentIconText} />
-            </div>
-            <h2 className="font-semibold text-slate-700 text-base">
-              Ajouter {type === "classes" ? "une classe" : "une matière"}
-            </h2>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-3">
-            <div className="flex-1">
-              <div className="relative">
-                <Icon size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-                <input
-                  type="text"
-                  value={newNom}
-                  onChange={(e) => { setNewNom(e.target.value); setAddError(""); }}
-                  onKeyDown={(e) => e.key === "Enter" && handleAjouter()}
-                  placeholder={cfg.placeholder}
-                  className={`w-full pl-9 pr-4 py-2.5 text-sm rounded-xl border bg-white text-slate-800
-                    transition-all duration-150 outline-none
-                    ${addError
-                      ? "border-red-400 ring-2 ring-red-100"
-                      : `border-slate-200 hover:border-slate-300 ${accentFocus}`
-                    }`}
-                />
+        {
+          openForm && (
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+              <div className="flex items-center gap-3 mb-5">
+                <div className={`w-8 h-8 rounded-xl ${accentIconBg} flex items-center justify-center`}>
+                  <Plus size={16} className={accentIconText} />
+                </div>
+                <h2 className="font-semibold text-slate-700 text-base">
+                  Ajouter {type === "classes" ? "une classe" : "une matière"}
+                </h2>
               </div>
-              {addError && (
-                <p className="text-xs text-red-500 mt-1.5 flex items-center gap-1">
-                  <XCircle size={11} /> {addError}
-                </p>
-              )}
+
+              <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex-1">
+                  <div className="relative">
+                    <Icon size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                    <input
+                      type="text"
+                      value={newNom}
+                      onChange={(e) => { setNewNom(e.target.value); setAddError(""); }}
+                      onKeyDown={(e) => e.key === "Enter" && handleAjouter()}
+                      placeholder={cfg.placeholder}
+                      className={`w-full pl-9 pr-4 py-2.5 text-sm rounded-xl border bg-white text-slate-800
+                        transition-all duration-150 outline-none
+                        ${addError
+                          ? "border-red-400 ring-2 ring-red-100"
+                          : `border-slate-200 hover:border-slate-300 ${accentFocus}`
+                        }`}
+                    />
+                  </div>
+                  {addError && (
+                    <p className="text-xs text-red-500 mt-1.5 flex items-center gap-1">
+                      <XCircle size={11} /> {addError}
+                    </p>
+                  )}
+                </div>
+                <button
+                  onClick={handleAjouter}
+                  className={`flex items-center justify-center gap-2 px-5 py-2.5 ${accentBg} ${accentHover}
+                    active:scale-95 text-white text-sm font-semibold rounded-xl transition-all duration-150
+                    shadow-sm ${accentShadow} whitespace-nowrap`}
+                >
+                  <Plus size={15} />
+                  Ajouter
+                </button>
+              </div>
             </div>
-            <button
-              onClick={handleAjouter}
-              className={`flex items-center justify-center gap-2 px-5 py-2.5 ${accentBg} ${accentHover}
-                active:scale-95 text-white text-sm font-semibold rounded-xl transition-all duration-150
-                shadow-sm ${accentShadow} whitespace-nowrap`}
-            >
-              <Plus size={15} />
-              Ajouter
-            </button>
-          </div>
-        </div>
+          )
+        }
 
         {/* ── List Card ── */}
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">

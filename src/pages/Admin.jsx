@@ -81,7 +81,6 @@ export default function App() {
             // ── Stats card ──
             const statRes = await adminService.Stat();
             if (statRes?.data) setStat(statRes.data);
-
             // ── Charts — await Promise.all (bug fix) ──
             const [moyenneEvolution, moyenneClasses, moyenneMatieres, repartition, nombreElevesFortByClasse, nombreElevesFaibleByClasse] = await Promise.all([
                 etablissementService.moyenneEvolution(),

@@ -20,12 +20,14 @@ const Etablissement = lazy(()=> import('../pages/Etablissement.jsx'))
 const Bulletins = lazy(()=> import('../pages/Bulletin.jsx'))
 const TopClasse = lazy(()=> import('../pages/MeilleurEleves.jsx'))
 const BadEleves = lazy(()=> import('../pages/MauvaisEleves.jsx'))
-const Matieres = lazy(()=> import('../pages/MatieresClasses.jsx'))
+const PostMatiereOrClasse = lazy(()=> import('../pages/MatieresClasses.jsx'))
 const Affectation = lazy(()=> import('../pages/Affectations.jsx'))
 const Import = lazy(()=> import ('../pages/Import.jsx'))
 const Register = lazy(()=> import('../pages/Register.jsx'))
 const Error500  = lazy(()=> import('../pages/Erreur500.jsx'))
 const NotesPage = lazy(()=>import('../pages/NotesPages.jsx'))
+const StatistiquesPages = lazy(()=> import('../pages/ClassesStat.jsx'))
+const StatistiquesClassePages = lazy(()=>import('../pages/StatistiquesClasse.jsx'))
 export default function Approutes() {
 return (
     <Suspense fallback={<PageLoader message={"chargement"}/>}>
@@ -37,14 +39,12 @@ return (
             <Route path="/500" element={<Error500 />} />
             <Route element={<PrivateRoute/>}>
                 {/* enseignant route  */}
-                {/* <Route element={<DashLayout/>}> */}
                     <Route path='/dashboard/enseignant' element={<DashboardEnseignant/>}/>
                     <Route path='/dashboard/classes' element={<Classes/>}/>
                     <Route path='/dashboard/eleves' element={<Classes/>}/>
                     <Route path='/dashboard/notes' element={<Classes/>}/>
                     <Route path='/dashboard/liste-eleve/:id' element={<ListeEleve/>}/>
                     <Route path="/dashboard/notes/:id_classe" element={<NotesPage />} />
-                {/* </Route> */}
                 {/* Admin route */}
                 <Route element={<AdminSideBar/>}>
                     <Route path='/dashboard-admin/liste-eleve/:id' element={<ListeEleve/>}/>
@@ -55,10 +55,12 @@ return (
                     <Route path='/dashboard/bulletins' element={<Bulletins/>}/>
                     <Route path='/dashboard/admin/meilleur-eleves' element={<TopClasse/>}/>
                     <Route path='/dashboard/admin/mauvais-eleves' element={<BadEleves/>}/>
-                    <Route path='/dashboard/admin/matieres' element={<Matieres/>}/>
-                    <Route path='/dashboard/admin/classes' element={<Matieres/>}/>
+                    <Route path='/dashboard/admin/matieres' element={<PostMatiereOrClasse/>}/>
+                    <Route path='/dashboard/admin/classes' element={<PostMatiereOrClasse/>}/>
                     <Route path='/dashboard/admin/affectation' element={<Affectation/>}/>
                     <Route path='/dashboard/admin/import' element={<Import/>}/>
+                    <Route path='/dashboard/admin/statistique' element={<StatistiquesPages/>}/>
+                    <Route path='/dashboard/admin/statistique/classe/:classeId' element={<StatistiquesClassePages/>}/>
                 </Route>
                 <Route path='/dashboard/eleve' element={<EleveDashboard/>}/>
             </Route>

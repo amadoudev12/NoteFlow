@@ -45,19 +45,19 @@ function DashboardPage({ stat, chartData, loading }) {
         </section>
 
         {/* ── Moyennes par classe & matière ── */}
-        <section className="grid grid-cols-1 xl:grid-cols-2 gap-5">
+        <section >
             <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
             <SectionHeader icon={BarChart3} title="Moyenne par classe" color="emerald" />
             {loading ? <Skeleton className="h-44" /> : <BarChart data={chartData.moyenneClasses?.moyenneClasses} labelKey="classe" valueKey="moyenne" color="#10b981" />}
             </div>
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
-            <SectionHeader icon={BarChart3} title="Moyenne par matière" color="amber" />
-            {loading ? <Skeleton className="h-44" /> : <BarChart  data={chartData.moyenneMatieres?.moyenneMatieres} labelKey="matiere" valueKey="moyenne" color="#f59e0b" />}
-            </div>
+            {/* <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+                <SectionHeader icon={BarChart3} title="Moyenne par matière" color="amber" />
+                {loading ? <Skeleton className="h-44" /> : <BarChart  data={chartData.moyenneMatieres?.moyenneMatieres} labelKey="matiere" valueKey="moyenne" color="#f59e0b" />}
+            </div> */}
         </section>
 
         {/* ── Classements ── */}
-        <section className="grid grid-cols-1 xl:grid-cols-2 gap-5">
+        {/* <section className="grid grid-cols-1 xl:grid-cols-2 gap-5">
             <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
                 <SectionHeader icon={Star} title="Top 5 meilleurs élèves" subtitle="Ce trimestre" color="amber" />
                 {loading
@@ -72,7 +72,7 @@ function DashboardPage({ stat, chartData, loading }) {
                 : chartData.elevesFaibles?.result?.map((e, i) => <ClasseRow key={i} classe={e.classe} nombre={e.nombre} isTop={false} />)
             }
             </div>
-        </section>
+        </section> */}
         </div>
     );
 }
