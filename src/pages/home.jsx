@@ -52,7 +52,7 @@ function FadeIn({ children, delay = 0, className = "" }) {
 
 //Navbar
 function Navbar() {
-  const [open, setOpen] = useState(false);
+  // const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 20);
@@ -97,11 +97,11 @@ function Navbar() {
             Commencer
           </button> */}
         </div>
-        <button className="md:hidden p-2 text-slate-700" onClick={() => setOpen(!open)}>
+        {/* <button className="md:hidden p-2 text-slate-700" onClick={() => setOpen(!open)}>
           {open ? <X size={22} /> : <Menu size={22} />}
-        </button>
+        </button> */}
       </div>
-      {open && (
+      {/* {open && (
         <div className="md:hidden bg-white border-t border-slate-100 px-6 py-4 flex flex-col gap-4">
           {links.map((l) => (
             <a key={l} href="#" className="text-sm text-slate-700 font-medium py-1">{l}</a>
@@ -110,7 +110,7 @@ function Navbar() {
             Commencer
           </button>
         </div>
-      )}
+      )} */}
     </nav>
   );
 }
