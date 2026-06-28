@@ -80,7 +80,7 @@ function Navbar() {
             </a>
           ))}
         </div> */}
-        <div className="hidden md:flex items-center gap-3">
+        <div className=" md:flex items-center gap-3">
           <button className="text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
                   <a
                     href="https://wa.me/2250566009210?text=Bonjour%20je%20souhaite%20obtenir%20des%20informations%20sur%20NoteFlow."
